@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodel="clr-namespace:MobileITJ.ViewModels"
+             x:DataType="viewmodel:CreateJobViewModel"
+             x:Class="MobileITJ.Views.Customer.CreateJobPage"
+             Title="Create Job"
+             BackgroundColor="{StaticResource BackgroundColor}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="15">
+
+            <Label Text="Create a New Job Post"
+                   FontSize="22"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center"
+                   TextColor="{StaticResource TextDark}" />
+
+            <VerticalStackLayout Spacing="10">
+                <Entry Placeholder="Job Description (e.g., 'Fix leaky pipe')" Text="{Binding JobDescription}" />
+                <Entry Placeholder="Location (e.g., 'Cebu City')" Text="{Binding Location}" />
+                <Entry Placeholder="Skills Needed (comma-separated)" Text="{Binding SkillSetText}" />
+                <Entry Placeholder="Rate Per Hour" Text="{Binding RatePerHour}" Keyboard="Numeric" />
+                <Entry Placeholder="Number of Workers Needed" Text="{Binding WorkersNeeded}" Keyboard="Numeric" />
+
+                <Button Text="Post Job"
+                        Command="{Binding SubmitJobCommand}"
+                        BackgroundColor="{StaticResource SecondaryColor}"
+                        TextColor="White"
+                        HorizontalOptions="Fill" />
+
+                <Label Text="{Binding ErrorMessage}"
+                       TextColor="{StaticResource DangerColor}"
+                       HorizontalOptions="Center" />
+
+                <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
+            </VerticalStackLayout>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

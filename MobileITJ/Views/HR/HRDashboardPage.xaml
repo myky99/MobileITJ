@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodel="clr-namespace:MobileITJ.ViewModels"
+             x:DataType="viewmodel:HRDashboardViewModel"
+             x:Class="MobileITJ.Views.HR.HRDashboardPage"
+             Title="HR Dashboard"
+             BackgroundColor="{StaticResource BackgroundColor}">
+
+    <Grid RowDefinitions="Auto, Auto, *">
+
+        <Image 
+            Grid.Row="0"
+            Source="banner.jpg"
+            Aspect="AspectFit"
+            HeightRequest="200"
+            Margin="0,0,0,0"/>
+
+        <Grid Grid.Row="1" ColumnDefinitions="*,*,*,*" Padding="10" ColumnSpacing="10">
+            <Button Grid.Column="0" BackgroundColor="Orange" Text="Create" TextColor="DarkBlue" Command="{Binding CreateWorkerCommand}" Style="{StaticResource TopTabButton}"/>
+            <Button Grid.Column="1" BackgroundColor="Orange" Text="Workers" TextColor="DarkBlue" Command="{Binding ViewWorkersCommand}" Style="{StaticResource TopTabButton}"/>
+            <Button Grid.Column="2" BackgroundColor="Orange" Text="Reports" TextColor="DarkBlue" Command="{Binding ViewJobReportsCommand}" Style="{StaticResource TopTabButton}"/>
+            <Button Grid.Column="3" BackgroundColor="Orange" Text="Clients" TextColor="DarkBlue" Command="{Binding ViewCustomersCommand}" Style="{StaticResource TopTabButton}"/>
+        </Grid>
+
+        <ScrollView Grid.Row="2">
+            <VerticalStackLayout Padding="20" Spacing="15">
+
+                <Label Text="{Binding WelcomeText}"
+                       FontSize="24"
+                       FontAttributes="Bold"
+                       FontFamily="Empty"
+                       HorizontalOptions="Center"
+                       TextColor="{StaticResource TextDark}" />
+
+                <Label Text="Manage Workers and Reports"
+                       FontSize="16"
+                       TextColor="Gray"
+                       HorizontalOptions="Center" />
+
+                <BoxView HeightRequest="20" />
+
+                <Button Text="Change Password" 
+                        Command="{Binding ChangePasswordCommand}" 
+                        BackgroundColor="White"
+                        TextColor="{StaticResource TextDark}"
+                        BorderColor="{StaticResource TextDark}"
+                        BorderWidth="1"
+                        HorizontalOptions="Fill" />
+
+                <Button Text="Logout"
+                        BackgroundColor="{StaticResource DangerColor}"
+                        TextColor="White"
+                        Command="{Binding LogoutCommand}"
+                        CornerRadius="10" 
+                        HorizontalOptions="Fill" />
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+
+</ContentPage>

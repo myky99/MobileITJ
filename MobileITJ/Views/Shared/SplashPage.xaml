@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage 
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="MobileITJ.Views.Shared.SplashPage"
+    BackgroundColor="Yellow">
+    <!-- 🟧 Orange background -->
+
+    <Grid RowDefinitions="Auto,Auto,*,Auto,Auto" Padding="30">
+
+        <!-- Title -->
+        <Label 
+            Grid.Row="0"
+            Text="A place for Workers"
+            FontSize="28"
+            FontAttributes="Bold"
+            TextColor="Black"
+            HorizontalOptions="Center"
+            VerticalOptions="End"
+            Margin="0,60,0,0"/>
+
+        <!-- Subtitle -->
+        <Label 
+            Grid.Row="1"
+            Text="Developed by SAN Corporation"
+            FontSize="16"
+            TextColor="Black"
+            HorizontalOptions="Center"
+            VerticalOptions="Start"
+            Margin="0,10,0,0"/>
+
+        <!-- Logo -->
+        <Image 
+            Grid.Row="2"
+            Source="app_logo.png"
+            WidthRequest="500"
+            HeightRequest="500"
+            HorizontalOptions="Center"
+            VerticalOptions="Center"
+            Margin="0,30,0,0"/>
+
+        <!-- Loading text -->
+        <Label 
+            Grid.Row="3"
+            Text="Loading..."
+            FontSize="18"
+            FontAttributes="Italic"
+            TextColor="Black"
+            HorizontalOptions="Center"
+            VerticalOptions="Start"
+            Margin="0,20,0,0"/>
+
+    </Grid>
+</ContentPage>

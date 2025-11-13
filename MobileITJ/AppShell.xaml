@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Shell
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:auth="clr-namespace:MobileITJ.Views.Auth"
+    xmlns:shared="clr-namespace:MobileITJ.Views.Shared"
+    xmlns:customer="clr-namespace:MobileITJ.Views.Customer"
+    xmlns:worker="clr-namespace:MobileITJ.Views.Worker"
+    xmlns:hr="clr-namespace:MobileITJ.Views.HR"
+    x:Class="MobileITJ.AppShell"
+    Shell.FlyoutBehavior="Disabled"
+    
+    Shell.TabBarBackgroundColor="White"
+    Shell.TabBarTitleColor="DarkBlue"
+    Shell.TabBarUnselectedColor="Gray">
+
+    <ShellContent
+        Title="Splash"
+        ContentTemplate="{DataTemplate shared:SplashPage}"
+        Route="SplashPage"
+        Shell.NavBarIsVisible="False" />
+
+    <ShellContent
+        Title="Login"
+        ContentTemplate="{DataTemplate auth:LoginPage}"
+        Route="LoginPage"
+        Shell.NavBarIsVisible="False" />
+
+    <ShellContent
+        Title="Register"
+        ContentTemplate="{DataTemplate auth:RegisterPage}"
+        Route="RegisterPage"
+        Shell.NavBarIsVisible="False" />
+
+    <TabBar Route="HRDashboardPage">
+        <ShellContent Title="Create" ContentTemplate="{DataTemplate hr:CreateWorkerPage}" Route="CreateWorkerPage" />
+        <ShellContent Title="Workers" ContentTemplate="{DataTemplate hr:ViewWorkersPage}" Route="ViewWorkersPage" />
+        <ShellContent Title="Reports" ContentTemplate="{DataTemplate hr:ViewJobsReportPage}" Route="ViewJobsReportPage" />
+        <ShellContent Title="Clients" ContentTemplate="{DataTemplate hr:ViewCustomersPage}" Route="ViewCustomersPage" />
+    </TabBar>
+
+    <TabBar Route="CustomerDashboardPage">
+        <ShellContent Title="Create Job" ContentTemplate="{DataTemplate customer:CreateJobPage}" Route="CreateJobPage" />
+        <ShellContent Title="My Jobs" ContentTemplate="{DataTemplate customer:ViewMyJobsPage}" Route="ViewMyJobsPage" />
+        <ShellContent Title="Rate" ContentTemplate="{DataTemplate customer:RateWorkerPage}" Route="RateWorkerPage" />
+        <ShellContent Title="Reports" ContentTemplate="{DataTemplate customer:ViewMyJobReportsPage}" Route="ViewMyJobReportsPage" />
+    </TabBar>
+
+    <TabBar Route="WorkerDashboardPage">
+        <ShellContent Title="Find Jobs" ContentTemplate="{DataTemplate worker:ViewAvailableJobsPage}" Route="ViewAvailableJobsPage" />
+        <ShellContent Title="My Jobs" ContentTemplate="{DataTemplate worker:ViewOngoingJobsPage}" Route="ViewOngoingJobsPage" />
+        <ShellContent Title="Profile" ContentTemplate="{DataTemplate worker:UpdateWorkerProfilePage}" Route="UpdateWorkerProfilePage" />
+        <ShellContent Title="Ratings" ContentTemplate="{DataTemplate worker:ViewRatingsPage}" Route="ViewRatingsPage" />
+    </TabBar>
+
+</Shell>

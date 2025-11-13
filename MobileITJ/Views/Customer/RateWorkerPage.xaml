@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:MobileITJ.Models"
+             xmlns:viewmodel="clr-namespace:MobileITJ.ViewModels"
+             x:DataType="viewmodel:RateWorkerViewModel"
+             x:Class="MobileITJ.Views.Customer.RateWorkerPage"
+             Title="Rate Worker"
+             BackgroundColor="{StaticResource BackgroundColor}">
+    <RefreshView Command="{Binding LoadJobsCommand}" 
+                 IsRefreshing="{Binding IsBusy}">
+        <CollectionView ItemsSource="{Binding CompletedJobs}"
+                        EmptyView="You have no completed jobs to rate.">
+
+            <CollectionView.Header>
+                <Label Text="Select a Completed Job to Rate Workers"
+                       FontSize="18"
+                       FontAttributes="Bold"
+                       HorizontalOptions="Center"
+                       Padding="20"/>
+            </CollectionView.Header>
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:Job">
+                    <Frame Padding="15" Margin="10,5" CornerRadius="10" BorderColor="#E0E0E0" HasShadow="True">
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer 
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:RateWorkerViewModel}}, Path=SelectJobCommand}"
+                                CommandParameter="{Binding .}" />
+                        </Frame.GestureRecognizers>
+
+                        <Grid RowDefinitions="Auto, Auto" ColumnDefinitions="*, Auto">
+                            <Label Grid.Row="0" 
+                                   Text="{Binding JobDescription}" 
+                                   FontAttributes="Bold" FontSize="18"/>
+
+                            <Label Grid.Row="1"
+                                   Text="{Binding Location}" 
+                                   FontSize="14" Margin="0,5,0,0"/>
+
+                            <Label Grid.Column="1" Grid.RowSpan="2"
+                                   Text=">"
+                                   FontSize="24"
+                                   VerticalOptions="Center"
+                                   TextColor="Gray"/>
+                        </Grid>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+
+        </CollectionView>
+    </RefreshView>
+</ContentPage>

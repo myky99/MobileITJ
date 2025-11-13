@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:MobileITJ.Models"
+             xmlns:viewmodel="clr-namespace:MobileITJ.ViewModels"
+             x:DataType="viewmodel:ViewCustomersViewModel"
+             x:Class="MobileITJ.Views.HR.ViewCustomersPage"
+             Title="View Customers"
+             BackgroundColor="{StaticResource BackgroundColor}">
+
+    <RefreshView Command="{Binding LoadCustomersCommand}" 
+                 IsRefreshing="{Binding IsBusy}">
+        <ScrollView>
+            <VerticalStackLayout>
+                <CollectionView ItemsSource="{Binding Customers}"
+                                EmptyView="No customers found.">
+
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:User">
+                            <Frame Padding="15" Margin="10,5" CornerRadius="10" BorderColor="#E0E0E0" HasShadow="True">
+                                <VerticalStackLayout Spacing="5">
+                                    <Label FontAttributes="Bold" FontSize="18">
+                                        <Label.FormattedText>
+                                            <FormattedString>
+                                                <Span Text="{Binding FirstName}" />
+                                                <Span Text=" " />
+                                                <Span Text="{Binding LastName}" />
+                                            </FormattedString>
+                                        </Label.FormattedText>
+                                    </Label>
+                                    <Label Text="{Binding Email}" 
+                                           FontSize="14" 
+                                           TextColor="Gray" />
+                                </VerticalStackLayout>
+                            </Frame>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+
+                </CollectionView>
+
+                <Button Text="Logout"
+                        Command="{Binding LogoutCommand}"
+                        BackgroundColor="{StaticResource DangerColor}"
+                        Margin="20"
+                        HorizontalOptions="Fill" />
+            </VerticalStackLayout>
+        </ScrollView>
+    </RefreshView>
+</ContentPage>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage 
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewmodel="clr-namespace:MobileITJ.ViewModels"
+    x:DataType="viewmodel:LoginViewModel"
+    x:Class="MobileITJ.Views.Auth.LoginPage"
+    Title="Login">
+
+    <ScrollView>
+        <VerticalStackLayout 
+            Spacing="20" 
+            Padding="30"
+            VerticalOptions="CenterAndExpand"
+            HorizontalOptions="Center">
+
+            <Image 
+                Source="logo.png"
+                HeightRequest="300"
+                WidthRequest="400"
+                HorizontalOptions="Center" />
+
+            <Label 
+                Text="A Place for Workers"
+                FontSize="24"
+                FontAttributes="Bold"
+                TextColor="Black"
+                HorizontalOptions="Center" />
+
+            <Label 
+                Text="Developed by SAN Corporation"
+                FontSize="14"
+                TextColor="Gray"
+                HorizontalOptions="Center" />
+
+            <Entry 
+                Placeholder="Email"
+                Text="{Binding Email}"
+                Keyboard="Email"
+                HorizontalOptions="FillAndExpand" />
+
+            <Entry 
+                Placeholder="Password"
+                Text="{Binding Password}"
+                IsPassword="True"
+                HorizontalOptions="FillAndExpand" />
+
+            <Button 
+                Text="Login"
+                BackgroundColor="Black"
+                TextColor="White"
+                CornerRadius="8"
+                Command="{Binding LoginCommand}"
+                HorizontalOptions="FillAndExpand" />
+
+            <StackLayout 
+                Orientation="Horizontal"
+                HorizontalOptions="Center">
+                <Label Text="New here? " TextColor="Black" />
+
+                <Label 
+                    Text="Create an Account"
+                    TextColor="Blue"
+                    FontAttributes="Bold">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding NavigateRegisterCommand}" />
+                    </Label.GestureRecognizers>
+                </Label>
+            </StackLayout>
+
+            <Label Text="{Binding ErrorMessage}"
+                   TextColor="{StaticResource DangerColor}"
+                   HorizontalOptions="Center" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

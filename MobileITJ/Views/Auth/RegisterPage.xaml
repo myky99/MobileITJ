@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodel="clr-namespace:MobileITJ.ViewModels"
+             x:DataType="viewmodel:RegisterViewModel"
+             x:Class="MobileITJ.Views.Auth.RegisterPage"
+             Title="Create Customer Account">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="30" Spacing="15" VerticalOptions="Center">
+
+            <Label Text="Create Your Account"
+                   FontSize="28"
+                   HorizontalTextAlignment="Center"
+                   FontAttributes="Bold" />
+
+            <Label Text="Sign up as a new Customer"
+                   FontSize="16"
+                   TextColor="Gray"
+                   HorizontalTextAlignment="Center" />
+
+            <Entry Placeholder="First Name" Text="{Binding FirstName}" />
+            <Entry Placeholder="Last Name" Text="{Binding LastName}" />
+            <Entry Placeholder="Email" Keyboard="Email" Text="{Binding Email}" />
+            <Entry Placeholder="Password" IsPassword="True" Text="{Binding Password}" />
+
+            <Button Text="Register"
+                    Command="{Binding RegisterCommand}"
+                    BackgroundColor="Green"
+                    TextColor="White" />
+
+            <Label Text="{Binding ErrorMessage}"
+                   TextColor="{StaticResource DangerColor}"
+                   HorizontalTextAlignment="Center" />
+
+            <Label Text="Already have an account?"
+                   HorizontalTextAlignment="Center"
+                   Margin="0,20,0,0"/>
+
+            <Label Text="Go to Login"
+                   TextDecorations="Underline"
+                   TextColor="Blue"
+                   HorizontalTextAlignment="Center">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding NavigateLoginCommand}" />
+                </Label.GestureRecognizers>
+            </Label>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

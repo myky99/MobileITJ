@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MobileITJ.Views.Shared.DeactivatedAccountPage"
+             Title="Account Deactivated"
+             Shell.NavBarIsVisible="False">
+
+    <VerticalStackLayout Padding="30" Spacing="20" VerticalOptions="Center">
+        <Label 
+            Text="Account Deactivated"
+            FontSize="24"
+            FontAttributes="Bold"
+            HorizontalOptions="Center" />
+
+        <Label 
+            Text="Sorry, Admin needs to activate your account to login."
+            FontSize="16"
+            HorizontalOptions="Center"
+            HorizontalTextAlignment="Center"
+            Margin="0,0,0,20" />
+
+        <Button 
+            Text="Back to Login"
+            Clicked="OnBackToLoginClicked"
+            HorizontalOptions="Fill" />
+    </VerticalStackLayout>
+
+</ContentPage>

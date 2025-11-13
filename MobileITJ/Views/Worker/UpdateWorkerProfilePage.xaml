@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:MobileITJ.Models"
+             xmlns:viewmodel="clr-namespace:MobileITJ.ViewModels"
+             x:DataType="viewmodel:UpdateProfileViewModel"
+             x:Class="MobileITJ.Views.Worker.UpdateWorkerProfilePage"
+             Title="My Profile"
+             BackgroundColor="{StaticResource BackgroundColor}">
+
+    <RefreshView Command="{Binding LoadProfileCommand}" 
+                 IsRefreshing="{Binding IsBusy}">
+        <ScrollView>
+            <VerticalStackLayout Padding="20" Spacing="15" IsVisible="{Binding Profile, Converter={StaticResource IsNotNullConverter}}">
+
+                <Label Text="{Binding Profile.FullName}"
+                       FontSize="28"
+                       FontAttributes="Bold"
+                       HorizontalOptions="Center"
+                       TextColor="{StaticResource TextDark}" />
+
+                <Label Text="{Binding Profile.WorkerId}"
+                       FontSize="16"
+                       TextColor="Gray"
+                       HorizontalOptions="Center" />
+
+                <Frame Padding="15" Margin="0,15" CornerRadius="10">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Email" FontAttributes="Bold" />
+                        <Label Text="{Binding Profile.Email}" />
+
+                        <Label Text="My Rate" FontAttributes="Bold" Margin="0,10,0,0" />
+                        <Label Text="{Binding Profile.RatePerHour, StringFormat='{0:C}/hr'}" TextColor="{StaticResource PrimaryColor}" />
+
+                        <Label Text="Status" FontAttributes="Bold" Margin="0,10,0,0" />
+                        <Label Text="{Binding Profile.IsActive, Converter={StaticResource BoolToIsActiveConverter}}" />
+                    </VerticalStackLayout>
+                </Frame>
+
+                <Label Text="My Skills" FontSize="20" FontAttributes="Bold" />
+                <CollectionView ItemsSource="{Binding Profile.Skills}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="x:String">
+                            <Label Text="{Binding .}" Margin="10,0" FontSize="16"/>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <Button Text="View My Wallet"
+                        Command="{Binding NavigateToWalletCommand}"
+                        Style="{StaticResource TopTabButton}"
+                        BackgroundColor="{StaticResource PrimaryColor}"
+                        TextColor="White"
+                        Margin="0,20,0,0"
+                        HorizontalOptions="Fill" />
+
+                <Button Text="Change My Password"
+                        Command="{Binding NavigateToChangePasswordCommand}"
+                        Style="{StaticResource TopTabButton}"
+                        BackgroundColor="White"
+                        TextColor="{StaticResource TextDark}"
+                        BorderColor="{StaticResource TextDark}"
+                        Margin="0,10,0,0"
+                        HorizontalOptions="Fill" />
+
+                <Button Text="Logout"
+                        Command="{Binding LogoutCommand}"
+                        BackgroundColor="{StaticResource DangerColor}"
+                        Margin="0,10,0,0"
+                        HorizontalOptions="Fill" />
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </RefreshView>
+</ContentPage>

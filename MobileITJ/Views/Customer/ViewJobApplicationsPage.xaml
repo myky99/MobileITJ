@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:MobileITJ.Models"
+             xmlns:viewmodel="clr-namespace:MobileITJ.ViewModels"
+             x:DataType="viewmodel:ViewJobApplicationsViewModel"
+             x:Class="MobileITJ.Views.Customer.ViewJobApplicationsPage"
+             Title="Job Applications"
+             BackgroundColor="{StaticResource BackgroundColor}"
+             x:Name="ThisPage">
+
+    <Grid RowDefinitions="*, Auto">
+
+        <RefreshView Grid.Row="0" 
+                     Command="{Binding LoadApplicationsCommand}" 
+                     IsRefreshing="{Binding IsBusy}">
+            <CollectionView ItemsSource="{Binding Applications}"
+                            EmptyView="No applications received for this job.">
+
+                <CollectionView.Header>
+                    <Label Text="Worker Applications"
+                           FontSize="24"
+                           FontAttributes="Bold"
+                           HorizontalOptions="Center"
+                           Padding="20" />
+                </CollectionView.Header>
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:JobApplicationDetail">
+                        <Frame Padding="15" Margin="10,5" CornerRadius="10" BorderColor="#E0E0E0" HasShadow="True">
+                            <Grid RowDefinitions="Auto, Auto, Auto, Auto" ColumnDefinitions="*">
+
+                                <Label Grid.Row="0" 
+                                       Text="{Binding WorkerName}" 
+                                       FontAttributes="Bold" FontSize="18"/>
+
+                                <Label Grid.Row="1"
+                                       Text="CLOCK IN"
+                                       IsVisible="{Binding IsClockedIn}"
+                                       FontAttributes="Bold"
+                                       TextColor="{StaticResource SecondaryColor}"
+                                       FontSize="12" />
+
+                                <Label Grid.Row="2"
+                                       FontSize="16" TextColor="{StaticResource PrimaryColor}" Margin="0,5,0,0">
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="Negotiated Rate: " />
+                                            <Span Text="{Binding NegotiatedRate, StringFormat='{0:C}/hr'}" />
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+
+                                <Button Grid.Row="3" 
+                                        Text="Accept Worker"
+                                        Style="{StaticResource TopTabButton}"
+                                        BackgroundColor="{StaticResource SecondaryColor}"
+                                        TextColor="White"
+                                        Margin="0,15,0,0"
+                                        HorizontalOptions="Start"
+                                        Command="{Binding BindingContext.AcceptApplicationCommand, Source={x:Reference ThisPage}}"
+                                        CommandParameter="{Binding .}">
+                                    <Button.Triggers>
+                                        <DataTrigger TargetType="Button" Binding="{Binding Status}" Value="Accepted">
+                                            <Setter Property="Text" Value="Accepted" />
+                                            <Setter Property="IsEnabled" Value="False" />
+                                            <Setter Property="BackgroundColor" Value="Gray" />
+                                        </DataTrigger>
+                                        <DataTrigger TargetType="Button" Binding="{Binding Status}" Value="Rejected">
+                                            <Setter Property="Text" Value="Rejected" />
+                                            <Setter Property="IsEnabled" Value="False" />
+                                            <Setter Property="BackgroundColor" Value="Gray" />
+                                        </DataTrigger>
+                                    </Button.Triggers>
+                                </Button>
+                            </Grid>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+
+            </CollectionView>
+        </RefreshView>
+
+        <VerticalStackLayout Grid.Row="1" Padding="10" BackgroundColor="White">
+            <Button Text="Mark Job as Complete"
+                    Command="{Binding CompleteJobCommand}"
+                    BackgroundColor="{StaticResource PrimaryColor}"
+                    HorizontalOptions="Fill">
+                <Button.Triggers>
+                    <DataTrigger TargetType="Button" Binding="{Binding CanCompleteJob}" Value="False">
+                        <Setter Property="IsEnabled" Value="False" />
+                        <Setter Property="BackgroundColor" Value="Gray" />
+                    </DataTrigger>
+                    <DataTrigger TargetType="Button" Binding="{Binding IsJobCompleted}" Value="True">
+                        <Setter Property="Text" Value="Job Already Completed" />
+                    </DataTrigger>
+                </Button.Triggers>
+            </Button>
+        </VerticalStackLayout>
+    </Grid>
+</ContentPage>

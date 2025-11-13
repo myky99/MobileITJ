@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Application
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:converters="clr-namespace:MobileITJ.Converters" 
+    x:Class="MobileITJ.App">
+
+    <Application.Resources>
+
+        <ResourceDictionary>
+
+            <converters:SkillsListToStringConverter x:Key="SkillsListToStringConverter" />
+            <converters:IsNotNullConverter x:Key="IsNotNullConverter" />
+            <converters:BoolToIsActiveConverter x:Key="BoolToIsActiveConverter" />
+            <converters:TimeSpanToStringConverter x:Key="TimeSpanToStringConverter" />
+
+            <Color x:Key="PrimaryColor">#1E88E5</Color>
+            <Color x:Key="PrimaryLight">#E3F2FD</Color>
+            <Color x:Key="SecondaryColor">#43A047</Color>
+            <Color x:Key="TextDark">#212121</Color>
+            <Color x:Key="BackgroundColor">#F9F9F9</Color>
+            <Color x:Key="DangerColor">#D32F2F</Color>
+
+            <Style TargetType="Label">
+                <Setter Property="TextColor" Value="{StaticResource TextDark}" />
+                <Setter Property="FontFamily" Value="OpenSansRegular" />
+            </Style>
+
+            <Style TargetType="Button">
+                <Setter Property="BackgroundColor" Value="{StaticResource PrimaryColor}" />
+                <Setter Property="TextColor" Value="White" />
+                <Setter Property="CornerRadius" Value="12" />
+                <Setter Property="Padding" Value="14,10" />
+                <Setter Property="FontFamily" Value="OpenSansSemibold" />
+            </Style>
+
+            <Style x:Key="TopTabButton" TargetType="Button">
+                <Setter Property="BorderWidth" Value="1" />
+                <Setter Property="CornerRadius" Value="20" />
+                <Setter Property="Padding" Value="10,8" />
+                <Setter Property="FontSize" Value="12" />
+                <Setter Property="FontFamily" Value="OpenSansSemibold" />
+            </Style>
+
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

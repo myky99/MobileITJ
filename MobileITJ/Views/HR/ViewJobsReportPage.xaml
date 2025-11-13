@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:MobileITJ.Models"
+             xmlns:viewmodel="clr-namespace:MobileITJ.ViewModels"
+             x:DataType="viewmodel:ViewJobsReportViewModel"
+             x:Class="MobileITJ.Views.HR.ViewJobsReportPage"
+             Title="Worker Reports"
+             BackgroundColor="{StaticResource BackgroundColor}">
+
+    <RefreshView Grid.Row="2" 
+                 Command="{Binding LoadReportsCommand}" 
+                 IsRefreshing="{Binding IsBusy}">
+        <CollectionView ItemsSource="{Binding WorkerReports}"
+                        EmptyView="No workers found.">
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:HrReportDetail">
+                    <Frame Padding="15" Margin="10,5" CornerRadius="10" BorderColor="#E0E0E0" HasShadow="True">
+                        <VerticalStackLayout Spacing="10">
+
+                            <Grid ColumnDefinitions="*, Auto">
+                                <Label Grid.Column="0"
+                                       Text="{Binding Worker.FullName}" 
+                                       FontAttributes="Bold" FontSize="18"/>
+                                <Label Grid.Column="1"
+                                       Text="{Binding Worker.RatePerHour, StringFormat='{0:C}/hr'}"
+                                       FontAttributes="Bold"
+                                       TextColor="{StaticResource PrimaryColor}"
+                                       VerticalOptions="Center" />
+                            </Grid>
+
+                            <Label FontSize="14">
+                                <Label.FormattedText>
+                                    <FormattedString>
+                                        <Span Text="Status: " FontAttributes="Bold" />
+                                        <Span Text="{Binding ReportCountDisplay}" />
+                                    </FormattedString>
+                                </Label.FormattedText>
+                                <Label.Triggers>
+                                    <DataTrigger TargetType="Label" Binding="{Binding HasReports}" Value="True">
+                                        <Setter Property="TextColor" Value="{StaticResource DangerColor}" />
+                                    </DataTrigger>
+                                </Label.Triggers>
+                            </Label>
+
+                            <VerticalStackLayout BindableLayout.ItemsSource="{Binding Reports}"
+                                                 IsVisible="{Binding HasReports}"
+                                                 Spacing="5" Margin="10,5,0,0">
+                                <BindableLayout.ItemTemplate>
+                                    <DataTemplate x:DataType="models:WorkerReport">
+                                        <Border Stroke="LightGray" StrokeThickness="1" Padding="10">
+                                            <VerticalStackLayout>
+                                                <Label Text="{Binding ReportMessage}" FontAttributes="Italic" />
+                                                <Label Text="{Binding DateFiled, StringFormat='Filed on: {0:d}'}" FontSize="10" TextColor="Gray" />
+                                            </VerticalStackLayout>
+                                        </Border>
+                                    </DataTemplate>
+                                </BindableLayout.ItemTemplate>
+                            </VerticalStackLayout>
+
+                        </VerticalStackLayout>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+
+        </CollectionView>
+    </RefreshView>
+</ContentPage>

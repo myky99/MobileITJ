@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:MobileITJ.Models"
+             xmlns:viewmodel="clr-namespace:MobileITJ.ViewModels"
+             x:DataType="viewmodel:WalletViewModel"
+             x:Class="MobileITJ.Views.Worker.WalletPage"
+             Title="My Wallet">
+
+    <RefreshView Command="{Binding LoadTransactionsCommand}" 
+                 IsRefreshing="{Binding IsBusy}">
+        <CollectionView ItemsSource="{Binding Transactions}"
+                        EmptyView="You have not received any payments yet.">
+
+            <CollectionView.Header>
+                <Label Text="Payment History"
+                       FontSize="24"
+                       FontAttributes="Bold"
+                       HorizontalOptions="Center"
+                       Padding="20" />
+            </CollectionView.Header>
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:Transaction">
+                    <Frame Padding="15" Margin="10,5" CornerRadius="10" BorderColor="#E0E0E0" HasShadow="True">
+                        <Grid ColumnDefinitions="*, Auto">
+                            <VerticalStackLayout Spacing="5">
+                                <Label Text="{Binding JobDescription}" 
+                                       FontAttributes="Bold" FontSize="18"/>
+                                <Label Text="{Binding DatePaid, StringFormat='Paid on: {0:MMM dd, yyyy}'}" 
+                                       FontSize="12" TextColor="Gray"/>
+                            </VerticalStackLayout>
+
+                            <Label Grid.Column="1"
+                                   Text="{Binding AmountPaid, StringFormat='+{0:C} pesos'}"
+                                   TextColor="{StaticResource SecondaryColor}"
+                                   FontSize="18"
+                                   FontAttributes="Bold"
+                                   VerticalOptions="Center" />
+                        </Grid>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+
+        </CollectionView>
+    </RefreshView>
+</ContentPage>

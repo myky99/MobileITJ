@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:MobileITJ.Models"
+             xmlns:viewmodel="clr-namespace:MobileITJ.ViewModels"
+             x:DataType="viewmodel:RateJobWorkersViewModel"
+             x:Class="MobileITJ.Views.Customer.RateJobWorkersPage"
+             
+             Title="Rate &amp; Pay Workers" 
+             
+             BackgroundColor="{StaticResource BackgroundColor}"
+             x:Name="ThisPage">
+
+    <Grid RowDefinitions="*">
+
+        <RefreshView Grid.Row="0" 
+                     Command="{Binding LoadWorkersCommand}" 
+                     IsRefreshing="{Binding IsBusy}">
+            <CollectionView ItemsSource="{Binding WorkersToRate}"
+                            EmptyView="No workers were assigned to this job.">
+
+                <CollectionView.Header>
+                    <Label Text="Pay &amp; Rate Workers"
+                           FontSize="24"
+                           FontAttributes="Bold"
+                           HorizontalOptions="Center"
+                           Padding="20" />
+                </CollectionView.Header>
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:JobApplicationDetail">
+                        <Frame Padding="15" Margin="10,5" CornerRadius="10" BorderColor="#E0E0E0" HasShadow="True">
+                            <Grid RowDefinitions="Auto, Auto, Auto, Auto, Auto" ColumnDefinitions="*">
+
+                                <Label Grid.Row="0" 
+                                       Text="{Binding WorkerName}" 
+                                       FontAttributes="Bold" FontSize="18"/>
+
+                                <Label Grid.Row="1" Margin="0,10,0,0">
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="Time Logged: " FontAttributes="Bold" />
+                                            <Span Text="{Binding TotalTimeSpent, Converter={StaticResource TimeSpanToStringConverter}}" />
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+
+                                <Label Grid.Row="2" FontSize="18" TextColor="{StaticResource PrimaryColor}">
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="Total Pay: " FontAttributes="Bold" />
+                                            <Span Text="{Binding TotalPay, StringFormat='{0:C}'}" FontAttributes="Bold" />
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+
+                                <VerticalStackLayout Grid.Row="3" Margin="0,10,0,0" IsVisible="{Binding IsRated}">
+                                    <Label Text="Your Rating:" FontAttributes="Bold" />
+                                    <Label Text="{Binding Rating, StringFormat='{0} ⭐️'}" FontSize="18" TextColor="{StaticResource PrimaryColor}" />
+                                    <Label Text="{Binding Review}" FontAttributes="Italic" FontSize="14" />
+                                </VerticalStackLayout>
+
+                                <HorizontalStackLayout Grid.Row="4" Spacing="10" Margin="0,15,0,0">
+
+                                    <Button Text="Pay Worker"
+                                            Style="{StaticResource TopTabButton}"
+                                            BackgroundColor="{StaticResource SecondaryColor}"
+                                            TextColor="White"
+                                            HorizontalOptions="Start"
+                                            Command="{Binding BindingContext.PayWorkerCommand, Source={x:Reference ThisPage}}"
+                                            CommandParameter="{Binding .}">
+                                        <Button.Triggers>
+                                            <DataTrigger TargetType="Button" Binding="{Binding IsPaid}" Value="True">
+                                                <Setter Property="Text" Value="Paid" />
+                                                <Setter Property="IsEnabled" Value="False" />
+                                                <Setter Property="BackgroundColor" Value="Gray" />
+                                            </DataTrigger>
+                                        </Button.Triggers>
+                                    </Button>
+
+                                    <Button Text="Rate This Worker"
+                                            Style="{StaticResource TopTabButton}"
+                                            BackgroundColor="{StaticResource PrimaryColor}"
+                                            TextColor="White"
+                                            HorizontalOptions="Start"
+                                            Command="{Binding BindingContext.RateWorkerCommand, Source={x:Reference ThisPage}}"
+                                            CommandParameter="{Binding .}">
+                                        <Button.Triggers>
+                                            <DataTrigger TargetType="Button" Binding="{Binding IsPaid}" Value="False">
+                                                <Setter Property="IsEnabled" Value="False" />
+                                                <Setter Property="BackgroundColor" Value="Gray" />
+                                            </DataTrigger>
+                                            <DataTrigger TargetType="Button" Binding="{Binding IsRated}" Value="True">
+                                                <Setter Property="Text" Value="Already Rated" />
+                                                <Setter Property="IsEnabled" Value="False" />
+                                                <Setter Property="BackgroundColor" Value="Gray" />
+                                            </DataTrigger>
+                                        </Button.Triggers>
+                                    </Button>
+                                </HorizontalStackLayout>
+                            </Grid>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+
+            </CollectionView>
+        </RefreshView>
+    </Grid>
+</ContentPage>

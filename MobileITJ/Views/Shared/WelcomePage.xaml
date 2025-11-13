@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodel="clr-namespace:MobileITJ.ViewModels"
+             x:DataType="viewmodel:WelcomeViewModel"
+             x:Class="MobileITJ.Views.Shared.WelcomePage"
+             Title="Welcome"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="Gold">
+
+    <VerticalStackLayout Spacing="25" Padding="30" VerticalOptions="Center" BackgroundColor="Gold">
+
+        <Label 
+            Text="{Binding WelcomeMessage}"
+            FontSize="40"
+            FontAttributes="Bold"
+            FontFamily="Empty"
+            HorizontalOptions="Center" />
+
+        <Image 
+            Source="app_logo.png" 
+            HeightRequest="550"
+            HorizontalOptions="Center" />
+
+        <Button 
+            Text="Press here to continue"
+            BackgroundColor="Gold"
+            TextColor="Black"
+            Command="{Binding ContinueCommand}"
+            HorizontalOptions="Fill"
+            FontSize="20"/>
+
+    </VerticalStackLayout>
+</ContentPage>
