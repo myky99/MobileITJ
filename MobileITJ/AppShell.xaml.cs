@@ -33,6 +33,6 @@ public partial class AppShell : Shell
         Routing.RegisterRoute("ViewOngoingJobsPage", typeof(ViewOngoingJobsPage));
         Routing.RegisterRoute("UpdateWorkerProfilePage", typeof(UpdateWorkerProfilePage));
         Routing.RegisterRoute("ViewRatingsPage", typeof(ViewRatingsPage));
-        Routing.RegisterRoute("WalletPage", typeof(WalletPage)); // 👈 --- ADD THIS ---
+        Routing.RegisterRoute("WalletPage", typeof(WalletPage));
     }
 }
