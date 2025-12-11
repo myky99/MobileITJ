@@ -2,50 +2,188 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewmodel="clr-namespace:MobileITJ.ViewModels"
+             xmlns:converters="clr-namespace:MobileITJ.Converters"
              x:DataType="viewmodel:RegisterViewModel"
              x:Class="MobileITJ.Views.Auth.RegisterPage"
-             Title="Create Customer Account">
+             Title="Create Account">
 
-    <ScrollView>
-        <VerticalStackLayout Padding="30" Spacing="15" VerticalOptions="Center">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
 
-            <Label Text="Create Your Account"
-                   FontSize="28"
-                   HorizontalTextAlignment="Center"
-                   FontAttributes="Bold" />
+    <Grid>
+        <!-- USER TYPE SELECTION SCREEN -->
+        <ScrollView IsVisible="{Binding IsUserTypeSelected, Converter={StaticResource InvertedBoolConverter}}">
+            <VerticalStackLayout Padding="30" Spacing="20" VerticalOptions="Center">
 
-            <Label Text="Sign up as a new Customer"
-                   FontSize="16"
-                   TextColor="Gray"
-                   HorizontalTextAlignment="Center" />
+                <Label Text="Choose Your Account Type"
+                       FontSize="28"
+                       HorizontalTextAlignment="Center"
+                       FontAttributes="Bold" />
 
-            <Entry Placeholder="First Name" Text="{Binding FirstName}" />
-            <Entry Placeholder="Last Name" Text="{Binding LastName}" />
-            <Entry Placeholder="Email" Keyboard="Email" Text="{Binding Email}" />
-            <Entry Placeholder="Password" IsPassword="True" Text="{Binding Password}" />
+                <Label Text="Select the type of account you want to create"
+                       FontSize="16"
+                       TextColor="Gray"
+                       HorizontalTextAlignment="Center"
+                       Margin="0,0,0,20" />
 
-            <Button Text="Register"
-                    Command="{Binding RegisterCommand}"
-                    BackgroundColor="Green"
-                    TextColor="White" />
+                <!-- CUSTOMER BUTTON -->
+                <Border Stroke="#2196F3"
+                        StrokeThickness="2"
+                        Background="Transparent"
+                        Padding="20"
+                        HeightRequest="100">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="10"/>
+                    </Border.StrokeShape>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding SelectUserTypeCommand}" 
+                                            CommandParameter="customer" />
+                    </Border.GestureRecognizers>
+                    
+                    <VerticalStackLayout Spacing="5" VerticalOptions="Center">
+                        <Label Text="👤 Customer"
+                               FontSize="24"
+                               FontAttributes="Bold"
+                               HorizontalTextAlignment="Center"
+                               TextColor="#2196F3" />
+                        <Label Text="I need to hire workers"
+                               FontSize="14"
+                               TextColor="Gray"
+                               HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </Border>
 
-            <Label Text="{Binding ErrorMessage}"
-                   TextColor="{StaticResource DangerColor}"
-                   HorizontalTextAlignment="Center" />
+                <!-- WORKER BUTTON -->
+                <Border Stroke="#4CAF50"
+                        StrokeThickness="2"
+                        Background="Transparent"
+                        Padding="20"
+                        HeightRequest="100">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="10"/>
+                    </Border.StrokeShape>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding SelectUserTypeCommand}" 
+                                            CommandParameter="worker" />
+                    </Border.GestureRecognizers>
+                    
+                    <VerticalStackLayout Spacing="5" VerticalOptions="Center">
+                        <Label Text="🔧 Worker"
+                               FontSize="24"
+                               FontAttributes="Bold"
+                               HorizontalTextAlignment="Center"
+                               TextColor="#4CAF50" />
+                        <Label Text="I want to find work"
+                               FontSize="14"
+                               TextColor="Gray"
+                               HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </Border>
 
-            <Label Text="Already have an account?"
-                   HorizontalTextAlignment="Center"
-                   Margin="0,20,0,0"/>
+                <!-- HR BUTTON -->
+                <Border Stroke="#FF9800"
+                        StrokeThickness="2"
+                        Background="Transparent"
+                        Padding="20"
+                        HeightRequest="100">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="10"/>
+                    </Border.StrokeShape>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding SelectUserTypeCommand}" 
+                                            CommandParameter="hr" />
+                    </Border.GestureRecognizers>
+                    
+                    <VerticalStackLayout Spacing="5" VerticalOptions="Center">
+                        <Label Text="💼 HR"
+                               FontSize="24"
+                               FontAttributes="Bold"
+                               HorizontalTextAlignment="Center"
+                               TextColor="#FF9800" />
+                        <Label Text="I manage workers and clients"
+                               FontSize="14"
+                               TextColor="Gray"
+                               HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </Border>
 
-            <Label Text="Go to Login"
-                   TextDecorations="Underline"
-                   TextColor="Blue"
-                   HorizontalTextAlignment="Center">
-                <Label.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding NavigateLoginCommand}" />
-                </Label.GestureRecognizers>
-            </Label>
+                <Label Text="Already have an account?"
+                       HorizontalTextAlignment="Center"
+                       Margin="0,20,0,0"/>
 
-        </VerticalStackLayout>
-    </ScrollView>
+                <Label Text="Go to Login"
+                       TextDecorations="Underline"
+                       TextColor="Blue"
+                       HorizontalTextAlignment="Center">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding NavigateLoginCommand}" />
+                    </Label.GestureRecognizers>
+                </Label>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- REGISTRATION FORM SCREEN (SHOWN AFTER SELECTION) -->
+        <ScrollView IsVisible="{Binding IsUserTypeSelected}">
+            <VerticalStackLayout Padding="30" Spacing="20" VerticalOptions="Center">
+
+                <Label Text="Create Your Account"
+                       FontSize="28"
+                       HorizontalTextAlignment="Center"
+                       FontAttributes="Bold" />
+
+                <Label Text="Complete your registration"
+                       FontSize="16"
+                       TextColor="Gray"
+                       HorizontalTextAlignment="Center"
+                       Margin="0,0,0,20" />
+
+                <Entry Placeholder="First Name" 
+                       Text="{Binding FirstName}" />
+
+                <Entry Placeholder="Last Name" 
+                       Text="{Binding LastName}" />
+
+                <Entry Placeholder="Email" 
+                       Keyboard="Email" 
+                       Text="{Binding Email}" />
+
+                <Entry Placeholder="Password" 
+                       IsPassword="True" 
+                       Text="{Binding Password}" />
+
+                <Button Text="Register"
+                        Command="{Binding RegisterCommand}"
+                        BackgroundColor="Green"
+                        TextColor="White"
+                        Margin="0,10,0,0" />
+
+                <Button Text="← Back to Selection"
+                        Command="{Binding BackToSelectionCommand}"
+                        BackgroundColor="Gray"
+                        TextColor="White" />
+
+                <Label Text="{Binding ErrorMessage}"
+                       TextColor="Red"
+                       HorizontalTextAlignment="Center" />
+
+                <Label Text="Already have an account?"
+                       HorizontalTextAlignment="Center"
+                       Margin="0,20,0,0"/>
+
+                <Label Text="Go to Login"
+                       TextDecorations="Underline"
+                       TextColor="Blue"
+                       HorizontalTextAlignment="Center">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding NavigateLoginCommand}" />
+                    </Label.GestureRecognizers>
+                </Label>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
 </ContentPage>

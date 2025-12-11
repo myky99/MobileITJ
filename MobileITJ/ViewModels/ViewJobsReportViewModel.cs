@@ -11,10 +11,9 @@ namespace MobileITJ.ViewModels
     {
         private readonly IAuthenticationService _auth;
 
-        // --- 👇 NEW LIST TYPE 👇 ---
         public ObservableCollection<HrReportDetail> WorkerReports { get; } = new ObservableCollection<HrReportDetail>();
         public Command LoadReportsCommand { get; }
-        // --- END OF NEW ---
+        public Command LogoutCommand { get; }
 
         public Command NavigateCreateWorkerCommand { get; }
         public Command NavigateViewWorkersCommand { get; }
@@ -25,6 +24,7 @@ namespace MobileITJ.ViewModels
         {
             _auth = auth;
             LoadReportsCommand = new Command(async () => await OnLoadReportsAsync());
+            LogoutCommand = new Command(async () => await OnLogoutAsync());
 
             NavigateCreateWorkerCommand = new Command(async () => await Shell.Current.GoToAsync("../CreateWorkerPage"));
             NavigateViewWorkersCommand = new Command(async () => await Shell.Current.GoToAsync("../ViewWorkersPage"));
@@ -32,7 +32,6 @@ namespace MobileITJ.ViewModels
             NavigateCustomersCommand = new Command(async () => await Shell.Current.GoToAsync("../ViewCustomersPage"));
         }
 
-        // --- 👇 ADD OnAppearing AND NEW LOGIC 👇 ---
         public async Task OnAppearing()
         {
             await OnLoadReportsAsync();
@@ -47,18 +46,13 @@ namespace MobileITJ.ViewModels
             {
                 WorkerReports.Clear();
 
-                // 1. Get all workers
                 var allWorkers = await _auth.GetAllWorkersAsync();
-
-                // 2. Get all reports
                 var allReports = await _auth.GetAllWorkerReportsAsync();
 
-                // 3. Group reports by WorkerId
                 var reportsByWorker = allReports
                     .GroupBy(r => r.WorkerUserId)
                     .ToDictionary(g => g.Key, g => g.ToList());
 
-                // 4. Create the final list
                 foreach (var worker in allWorkers)
                 {
                     var detail = new HrReportDetail { Worker = worker };
@@ -76,6 +70,19 @@ namespace MobileITJ.ViewModels
                 IsBusy = false;
             }
         }
-        // --- END OF NEW ---
+
+        private async Task OnLogoutAsync()
+        {
+            bool confirm = await Application.Current.MainPage.DisplayAlert(
+                "Logout",
+                "Are you sure you want to logout?",
+                "Yes",
+                "No");
+
+            if (!confirm) return;
+
+            await _auth.LogoutAsync();
+            await Shell.Current.GoToAsync("//LoginPage");
+        }
     }
 }

@@ -652,8 +652,22 @@ namespace MobileITJ.Services
 
         public async Task LogoutAsync()
         {
+            // Clear current user session
             _currentUser = null;
-            SecureStorage.Default.Remove("user_token");
+            
+            // Remove all secure storage items
+            try
+            {
+                SecureStorage.Default.Remove("user_token");
+                SecureStorage.Default.Remove("user_id");
+                SecureStorage.Default.Remove("user_email");
+                SecureStorage.Default.RemoveAll(); // Complete cleanup
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error clearing secure storage: {ex.Message}");
+            }
+            
             await Task.CompletedTask;
         }
 

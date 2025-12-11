@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.Maui.Controls;
 using MobileITJ.Models;
 using MobileITJ.Services;
-using System.Collections.Generic; // 👈 Make sure this is added
+using System.Collections.Generic;
 
 namespace MobileITJ.ViewModels
 {
@@ -15,6 +15,7 @@ namespace MobileITJ.ViewModels
         public Command LoadWorkersCommand { get; }
         public Command<WorkerDetail> ToggleActivationCommand { get; }
         public Command<WorkerDetail> AddSkillCommand { get; }
+        public Command LogoutCommand { get; }
 
         // --- Navigation Commands for Tabs ---
         public Command NavigateCreateWorkerCommand { get; }
@@ -28,6 +29,7 @@ namespace MobileITJ.ViewModels
             LoadWorkersCommand = new Command(async () => await OnLoadWorkersAsync());
             AddSkillCommand = new Command<WorkerDetail>(async (worker) => await OnAddSkillAsync(worker));
             ToggleActivationCommand = new Command<WorkerDetail>(async (worker) => await OnToggleActivationAsync(worker));
+            LogoutCommand = new Command(async () => await OnLogoutAsync());
 
             // --- Tab Navigation ---
             NavigateCreateWorkerCommand = new Command(async () => await Shell.Current.GoToAsync("../CreateWorkerPage"));
@@ -66,30 +68,69 @@ namespace MobileITJ.ViewModels
         {
             if (worker == null) return;
 
-            // We just save the change. The 'IsActive' property in WorkerDetail
-            // is already bound to the Switch, so no need to set it here.
+            string status = worker.IsActive ? "activate" : "deactivate";
+            bool confirm = await Application.Current.MainPage.DisplayAlert(
+                "Confirm Action",
+                $"Are you sure you want to {status} {worker.FullName}?",
+                "Yes",
+                "No");
+
+            if (!confirm)
+            {
+                // Revert the toggle
+                worker.IsActive = !worker.IsActive;
+                return;
+            }
+
             await _auth.UpdateWorkerProfileAsync(worker);
+            
+            string message = worker.IsActive ? "activated" : "deactivated";
+            await Application.Current.MainPage.DisplayAlert("Success", $"{worker.FullName} has been {message}.", "OK");
         }
 
         private async Task OnAddSkillAsync(WorkerDetail worker)
         {
             if (worker == null) return;
 
-            string newSkill = await Application.Current.MainPage.DisplayPromptAsync("Add Skill", $"Enter new skill for {worker.FullName}:");
+            string newSkill = await Application.Current.MainPage.DisplayPromptAsync(
+                "Add Skill", 
+                $"Enter new skill for {worker.FullName}:",
+                "Add",
+                "Cancel",
+                "e.g., Plumbing");
 
             if (!string.IsNullOrWhiteSpace(newSkill))
             {
-                // Create a new list based on the old one
                 var currentSkills = new List<string>(worker.Skills);
-                currentSkills.Add(newSkill.Trim());
+                
+                // Check for duplicates
+                if (currentSkills.Contains(newSkill.Trim()))
+                {
+                    await Application.Current.MainPage.DisplayAlert("Duplicate Skill", "This skill already exists for this worker.", "OK");
+                    return;
+                }
 
-                // Assign the new list. This triggers the 'set' in WorkerDetail
-                // which updates both 'Skills' and 'SkillsDisplay'
+                currentSkills.Add(newSkill.Trim());
                 worker.Skills = currentSkills;
 
-                // Save the change to the JSON file
                 await _auth.UpdateWorkerProfileAsync(worker);
+                
+                await Application.Current.MainPage.DisplayAlert("Success", $"Skill '{newSkill}' added successfully!", "OK");
             }
+        }
+
+        private async Task OnLogoutAsync()
+        {
+            bool confirm = await Application.Current.MainPage.DisplayAlert(
+                "Logout", 
+                "Are you sure you want to logout?", 
+                "Yes", 
+                "No");
+
+            if (!confirm) return;
+
+            await _auth.LogoutAsync();
+            await Shell.Current.GoToAsync("//LoginPage");
         }
     }
 }

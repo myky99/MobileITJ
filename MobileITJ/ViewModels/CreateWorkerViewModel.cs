@@ -23,16 +23,8 @@ namespace MobileITJ.ViewModels
         public string SkillSetText { get => _skillSetText; set => SetProperty(ref _skillSetText, value); }
         public decimal RatePerHour { get => _ratePerHour; set => SetProperty(ref _ratePerHour, value); }
 
-        // --- 👇 We no longer need these properties 👇 ---
-        // private string _generatedWorkerId = "";
-        // private string _generatedTempPassword = "";
-        // private bool _isWorkerCreated = false;
-        // public string GeneratedWorkerId { ... }
-        // public string GeneratedTempPassword { ... }
-        // public bool IsWorkerCreated { ... }
-        // --- END OF REMOVAL ---
-
         public Command SubmitWorkerCommand { get; }
+        public Command LogoutCommand { get; }
         public Command NavigateCreateWorkerCommand { get; }
         public Command NavigateViewWorkersCommand { get; }
         public Command NavigateJobReportsCommand { get; }
@@ -43,6 +35,7 @@ namespace MobileITJ.ViewModels
             _auth = auth;
 
             SubmitWorkerCommand = new Command(async () => await OnCreateWorkerAsync());
+            LogoutCommand = new Command(async () => await OnLogoutAsync());
 
             NavigateCreateWorkerCommand = new Command(async () => await Shell.Current.GoToAsync("../CreateWorkerPage"));
             NavigateViewWorkersCommand = new Command(async () => await Shell.Current.GoToAsync("../ViewWorkersPage"));
@@ -55,10 +48,28 @@ namespace MobileITJ.ViewModels
             if (IsBusy) return;
             IsBusy = true;
             ErrorMessage = "";
-            // IsWorkerCreated = false; // No longer needed
 
             try
             {
+                // Validation
+                if (string.IsNullOrWhiteSpace(FirstName) || string.IsNullOrWhiteSpace(LastName))
+                {
+                    ErrorMessage = "Please enter worker's first and last name.";
+                    return;
+                }
+
+                if (string.IsNullOrWhiteSpace(Email))
+                {
+                    ErrorMessage = "Please enter worker's email.";
+                    return;
+                }
+
+                if (RatePerHour <= 0)
+                {
+                    ErrorMessage = "Please enter a valid rate per hour.";
+                    return;
+                }
+
                 var skills = _skillSetText.Split(',')
                                           .Select(s => s.Trim())
                                           .Where(s => !string.IsNullOrEmpty(s))
@@ -67,7 +78,6 @@ namespace MobileITJ.ViewModels
                 if (skills.Count == 0)
                 {
                     ErrorMessage = "Please enter at least one skill.";
-                    IsBusy = false;
                     return;
                 }
 
@@ -75,9 +85,8 @@ namespace MobileITJ.ViewModels
 
                 if (success)
                 {
-                    // --- 👇 THIS IS THE NEW POP-UP LOGIC 👇 ---
-                    string popupMessage = $"The worker's email is: {Email}\nTemporary Password is: {tempPassword}";
-                    await Application.Current.MainPage.DisplayAlert("Worker Created", popupMessage, "OK");
+                    string popupMessage = $"Worker ID: {workerId}\nEmail: {Email}\nTemporary Password: {tempPassword}\n\nPlease provide these credentials to the worker.";
+                    await Application.Current.MainPage.DisplayAlert("Worker Created Successfully!", popupMessage, "OK");
 
                     // Clear the form
                     FirstName = "";
@@ -85,7 +94,6 @@ namespace MobileITJ.ViewModels
                     Email = "";
                     SkillSetText = "";
                     RatePerHour = 0;
-                    // --- END OF NEW LOGIC ---
                 }
                 else
                 {
@@ -96,6 +104,20 @@ namespace MobileITJ.ViewModels
             {
                 IsBusy = false;
             }
+        }
+
+        private async Task OnLogoutAsync()
+        {
+            bool confirm = await Application.Current.MainPage.DisplayAlert(
+                "Logout", 
+                "Are you sure you want to logout?", 
+                "Yes", 
+                "No");
+
+            if (!confirm) return;
+
+            await _auth.LogoutAsync();
+            await Shell.Current.GoToAsync("//LoginPage");
         }
     }
 }

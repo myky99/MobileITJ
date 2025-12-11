@@ -11,8 +11,6 @@ namespace MobileITJ.ViewModels
         private readonly IAuthenticationService _auth;
         public ObservableCollection<User> Customers { get; } = new ObservableCollection<User>();
         public Command LoadCustomersCommand { get; }
-
-        // --- 👇 ADD THIS COMMAND 👇 ---
         public Command LogoutCommand { get; }
 
         public Command NavigateCreateWorkerCommand { get; }
@@ -24,10 +22,7 @@ namespace MobileITJ.ViewModels
         {
             _auth = auth;
             LoadCustomersCommand = new Command(async () => await OnLoadCustomersAsync());
-
-            // --- 👇 ADD THIS LOGIC 👇 ---
             LogoutCommand = new Command(async () => await OnLogoutAsync());
-            // --- END OF NEW ---
 
             NavigateCreateWorkerCommand = new Command(async () => await Shell.Current.GoToAsync("../CreateWorkerPage"));
             NavigateViewWorkersCommand = new Command(async () => await Shell.Current.GoToAsync("../ViewWorkersPage"));
@@ -60,12 +55,18 @@ namespace MobileITJ.ViewModels
             }
         }
 
-        // --- 👇 ADD THIS NEW METHOD 👇 ---
         private async Task OnLogoutAsync()
         {
+            bool confirm = await Application.Current.MainPage.DisplayAlert(
+                "Logout", 
+                "Are you sure you want to logout?", 
+                "Yes", 
+                "No");
+
+            if (!confirm) return;
+
             await _auth.LogoutAsync();
             await Shell.Current.GoToAsync("//LoginPage");
         }
-        // --- END OF NEW ---
     }
 }

@@ -28,6 +28,7 @@ namespace MobileITJ
             builder.Services.AddSingleton<IsNotNullConverter>();
             builder.Services.AddSingleton<BoolToIsActiveConverter>();
             builder.Services.AddSingleton<TimeSpanToStringConverter>();
+            builder.Services.AddSingleton<InvertedBoolConverter>(); // ✅ ADD THIS
 
             // --- 👇 REGISTER THE NEW SERVICE 👇 ---
             builder.Services.AddSingleton<IPopupService, PopupService>();
