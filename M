@@ -1,0 +1,139 @@
+obileITJ\Views\Shared\SplashPage.xaml
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage 
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="MobileITJ.Views.Shared.SplashPage"
+    BackgroundColor="#FFFF00">
+
+    <Grid RowDefinitions="*,Auto,Auto,Auto,*" Padding="30">
+
+        <!-- Top Spacer -->
+        <BoxView Grid.Row="0" BackgroundColor="Transparent" />
+
+        <!-- Logo -->
+        <Image 
+            Grid.Row="1"
+            Source="logo.png"
+            WidthRequest="200"
+            HeightRequest="200"
+            Aspect="AspectFit"
+            HorizontalOptions="Center"
+            VerticalOptions="Center"
+            Margin="0,0,0,20"/>
+
+        <!-- Title -->
+        <Label 
+            Grid.Row="2"
+            Text="Industrial Trade Jobs"
+            FontSize="32"
+            FontAttributes="Bold"
+            TextColor="Black"
+            HorizontalOptions="Center"
+            VerticalOptions="Center"
+            Margin="0,0,0,10"/>
+
+        <!-- Subtitle -->
+        <Label 
+            Grid.Row="3"
+            Text="A place for Workers"
+            FontSize="18"
+            TextColor="#333333"
+            HorizontalOptions="Center"
+            VerticalOptions="Center"
+            Margin="0,0,0,5"/>
+
+        <!-- Developer Credit -->
+        <Label 
+            Grid.Row="3"
+            Text="Developed by SAN Corporation"
+            FontSize="14"
+            FontAttributes="Italic"
+            TextColor="#666666"
+            HorizontalOptions="Center"
+            VerticalOptions="End"
+            Margin="0,0,0,40"/>
+
+        <!-- Bottom Spacer -->
+        <BoxView Grid.Row="4" BackgroundColor="Transparent" />
+
+        <!-- Loading Indicator -->
+        <ActivityIndicator 
+            Grid.Row="4"
+            IsRunning="True"
+            Color="Black"
+            VerticalOptions="End"
+            HorizontalOptions="Center"
+            Margin="0,0,0,50"/>
+
+    </Grid>
+</ContentPage>obileITJ\Views\Shared\SplashPage.xaml
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage 
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="MobileITJ.Views.Shared.SplashPage"
+    BackgroundColor="#FFFF00">
+
+    <Grid RowDefinitions="*,Auto,Auto,Auto,*" Padding="30">
+
+        <!-- Top Spacer -->
+        <BoxView Grid.Row="0" BackgroundColor="Transparent" />
+
+        <!-- Logo -->
+        <Image 
+            Grid.Row="1"
+            Source="logo.png"
+            WidthRequest="200"
+            HeightRequest="200"
+            Aspect="AspectFit"
+            HorizontalOptions="Center"
+            VerticalOptions="Center"
+            Margin="0,0,0,20"/>
+
+        <!-- Title -->
+        <Label 
+            Grid.Row="2"
+            Text="Industrial Trade Jobs"
+            FontSize="32"
+            FontAttributes="Bold"
+            TextColor="Black"
+            HorizontalOptions="Center"
+            VerticalOptions="Center"
+            Margin="0,0,0,10"/>
+
+        <!-- Subtitle -->
+        <Label 
+            Grid.Row="3"
+            Text="A place for Workers"
+            FontSize="18"
+            TextColor="#333333"
+            HorizontalOptions="Center"
+            VerticalOptions="Center"
+            Margin="0,0,0,5"/>
+
+        <!-- Developer Credit -->
+        <Label 
+            Grid.Row="3"
+            Text="Developed by SAN Corporation"
+            FontSize="14"
+            FontAttributes="Italic"
+            TextColor="#666666"
+            HorizontalOptions="Center"
+            VerticalOptions="End"
+            Margin="0,0,0,40"/>
+
+        <!-- Bottom Spacer -->
+        <BoxView Grid.Row="4" BackgroundColor="Transparent" />
+
+        <!-- Loading Indicator -->
+        <ActivityIndicator 
+            Grid.Row="4"
+            IsRunning="True"
+            Color="Black"
+            VerticalOptions="End"
+            HorizontalOptions="Center"
+            Margin="0,0,0,50"/>
+
+    </Grid>
+</ContentPage>
