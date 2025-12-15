@@ -63,11 +63,6 @@
                         Margin="0,10,0,0"
                         HorizontalOptions="Fill" />
 
-                <Button Text="Logout"
-                        Command="{Binding LogoutCommand}"
-                        BackgroundColor="{StaticResource DangerColor}"
-                        Margin="0,10,0,0"
-                        HorizontalOptions="Fill" />
 
             </VerticalStackLayout>
         </ScrollView>

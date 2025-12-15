@@ -10,31 +10,66 @@
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="15">
 
-            <Label Text="Create a New Job Post"
-                   FontSize="22"
-                   FontAttributes="Bold"
-                   HorizontalOptions="Center"
-                   TextColor="{StaticResource TextDark}" />
+            <Label Text="Post a New Job" 
+                   FontSize="22" 
+                   FontAttributes="Bold" 
+                   TextColor="{StaticResource PrimaryColor}" 
+                   HorizontalOptions="Center" />
 
-            <VerticalStackLayout Spacing="10">
-                <Entry Placeholder="Job Description (e.g., 'Fix leaky pipe')" Text="{Binding JobDescription}" />
-                <Entry Placeholder="Location (e.g., 'Cebu City')" Text="{Binding Location}" />
-                <Entry Placeholder="Skills Needed (comma-separated)" Text="{Binding SkillSetText}" />
-                <Entry Placeholder="Rate Per Hour" Text="{Binding RatePerHour}" Keyboard="Numeric" />
-                <Entry Placeholder="Number of Workers Needed" Text="{Binding WorkersNeeded}" Keyboard="Numeric" />
+            <Frame Padding="15" CornerRadius="10" BackgroundColor="White" HasShadow="True">
+                <VerticalStackLayout Spacing="10">
 
-                <Button Text="Post Job"
-                        Command="{Binding SubmitJobCommand}"
-                        BackgroundColor="{StaticResource SecondaryColor}"
-                        TextColor="White"
-                        HorizontalOptions="Fill" />
+                    <Label Text="Job Title" FontAttributes="Bold" />
+                    <Entry Placeholder="e.g. Urgent Pipe Repair" Text="{Binding JobTitle}" />
+                    <Label Text="Job Description" FontAttributes="Bold" />
+                    <Entry Placeholder="e.g. Fix leaking pipe in the basement" Text="{Binding JobDescription}" />
 
-                <Label Text="{Binding ErrorMessage}"
-                       TextColor="{StaticResource DangerColor}"
-                       HorizontalOptions="Center" />
+                    <Label Text="Location" FontAttributes="Bold" />
+                    <Entry Placeholder="e.g. 123 Main St" Text="{Binding Location}" />
 
-                <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
-            </VerticalStackLayout>
+                    <Label Text="Required Skill" FontAttributes="Bold" />
+                    <Frame Padding="0" BorderColor="LightGray" CornerRadius="5" HasShadow="False">
+                        <Picker Title="Select Skill Needed"
+                                ItemsSource="{Binding AvailableSkills}"
+                                SelectedItem="{Binding SelectedSkill}"
+                                TextColor="Black" 
+                                TitleColor="Gray"/>
+                    </Frame>
+
+                    <Entry Placeholder="Type specific skill..." 
+                           Text="{Binding CustomSkillEntry}"
+                           IsVisible="{Binding IsCustomSkillVisible}"
+                           Margin="0,5,0,0"/>
+
+                    <Grid ColumnDefinitions="*,*">
+                        <VerticalStackLayout Grid.Column="0" Margin="0,0,5,0">
+                            <Label Text="Workers Needed" FontAttributes="Bold" />
+                            <Entry Placeholder="#" 
+                                   Text="{Binding WorkersNeeded}" 
+                                   Keyboard="Numeric" />
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Grid.Column="1" Margin="5,0,0,0">
+                            <Label Text="Rate per Hour" FontAttributes="Bold" />
+                            <Entry Placeholder="Php" 
+                                   Text="{Binding RatePerHour}" 
+                                   Keyboard="Numeric" />
+                        </VerticalStackLayout>
+                    </Grid>
+
+                </VerticalStackLayout>
+            </Frame>
+
+            <Label Text="{Binding ErrorMessage}" 
+                   TextColor="Red" 
+                   IsVisible="{Binding ErrorMessage, Converter={StaticResource IsNotNullConverter}}" />
+
+            <Button Text="Post Job" 
+                    Command="{Binding SubmitJobCommand}" 
+                    BackgroundColor="{StaticResource PrimaryColor}" 
+                    TextColor="White" 
+                    CornerRadius="10" 
+                    HeightRequest="50" />
 
         </VerticalStackLayout>
     </ScrollView>

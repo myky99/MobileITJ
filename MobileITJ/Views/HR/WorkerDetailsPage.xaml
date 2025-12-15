@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodel="clr-namespace:MobileITJ.ViewModels"
+             xmlns:models="clr-namespace:MobileITJ.Models"
+             x:Class="MobileITJ.Views.HR.WorkerDetailsPage"
+             Title="Worker Profile"
+             BackgroundColor="#F5F5F5">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="15" Padding="20">
+
+            <Frame CornerRadius="15" BackgroundColor="White" HasShadow="True">
+                <VerticalStackLayout Spacing="5">
+                    <Label Text="{Binding Worker.FullName}" FontSize="22" FontAttributes="Bold" TextColor="Black"/>
+                    <Label Text="{Binding Worker.WorkerId}" FontSize="14" TextColor="Gray"/>
+                    <Label Text="{Binding Worker.Email}" FontSize="14" TextColor="Gray"/>
+
+                    <Grid ColumnDefinitions="Auto, Auto" Margin="0,5,0,0">
+                        <Label Text="{Binding Worker.RatePerHour, StringFormat='Rate: {0:C}/hr'}" 
+                               FontSize="18" TextColor="{StaticResource PrimaryColor}" FontAttributes="Bold"
+                               VerticalOptions="Center"/>
+
+                        <Button Grid.Column="1" Text="Edit" Command="{Binding EditRateCommand}"
+                                HeightRequest="30" Padding="10,0" Margin="10,0,0,0" FontSize="12"
+                                BackgroundColor="Transparent" TextColor="Blue" BorderColor="Blue" BorderWidth="1"/>
+                    </Grid>
+
+                    <Label FontSize="14" FontAttributes="Bold" Margin="0,5,0,0">
+                        <Label.Triggers>
+                            <DataTrigger TargetType="Label" Binding="{Binding Worker.IsActive}" Value="True">
+                                <Setter Property="Text" Value="● Active Account" />
+                                <Setter Property="TextColor" Value="Green" />
+                            </DataTrigger>
+                            <DataTrigger TargetType="Label" Binding="{Binding Worker.IsActive}" Value="False">
+                                <Setter Property="Text" Value="● Deactivated Account" />
+                                <Setter Property="TextColor" Value="Red" />
+                            </DataTrigger>
+                        </Label.Triggers>
+                    </Label>
+                </VerticalStackLayout>
+            </Frame>
+
+            <Frame CornerRadius="15" BackgroundColor="White" HasShadow="True">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Management" FontSize="18" FontAttributes="Bold"/>
+
+                    <Button Command="{Binding ToggleActivationCommand}" 
+                            CornerRadius="8" FontAttributes="Bold">
+                        <Button.Triggers>
+                            <DataTrigger TargetType="Button" Binding="{Binding Worker.IsActive}" Value="True">
+                                <Setter Property="Text" Value="Deactivate Worker" />
+                                <Setter Property="BackgroundColor" Value="#FFCDD2" />
+                                <Setter Property="TextColor" Value="#C62828" />
+                            </DataTrigger>
+                            <DataTrigger TargetType="Button" Binding="{Binding Worker.IsActive}" Value="False">
+                                <Setter Property="Text" Value="Activate Worker" />
+                                <Setter Property="BackgroundColor" Value="#C8E6C9" />
+                                <Setter Property="TextColor" Value="#2E7D32" />
+                            </DataTrigger>
+                        </Button.Triggers>
+                    </Button>
+
+                    <BoxView HeightRequest="1" Color="LightGray" Margin="0,5"/>
+
+                    <Label Text="Add New Skill:" FontAttributes="Bold" Margin="0,5,0,0"/>
+
+                    <Frame Padding="0" BorderColor="LightGray" CornerRadius="5" HasShadow="False">
+                        <Picker Title="Select Category"
+                                ItemsSource="{Binding AvailableSkills}"
+                                SelectedItem="{Binding SelectedSkill}"
+                                TextColor="Black" 
+                                TitleColor="Gray"/>
+                    </Frame>
+
+                    <Entry Placeholder="Type specific skill..." 
+                           Text="{Binding CustomSkillEntry}"
+                           IsVisible="{Binding IsCustomSkillVisible}"
+                           Margin="0,5,0,0"/>
+
+                    <Button Text="Save Skill" Command="{Binding SaveSkillCommand}" 
+                            BackgroundColor="{StaticResource PrimaryColor}" TextColor="White" 
+                            CornerRadius="5" Margin="0,5,0,0"/>
+
+                    <Grid ColumnDefinitions="*,*" Margin="0,15,0,0">
+                        <Button Grid.Column="0" Text="+ New Category" 
+                                Command="{Binding AddNewCategoryCommand}"
+                                FontSize="10" HeightRequest="35" Padding="0"
+                                BackgroundColor="Transparent" TextColor="Blue" />
+
+                        <Button Grid.Column="1" Text="- Delete Category" 
+                                Command="{Binding DeleteCategoryCommand}"
+                                FontSize="10" HeightRequest="35" Padding="0"
+                                BackgroundColor="Transparent" TextColor="Red" />
+                    </Grid>
+
+                    <BoxView HeightRequest="1" Color="LightGray" Margin="0,10"/>
+
+                    <Label Text="Current Skills:" FontAttributes="Bold"/>
+                    <Label Text="{Binding Worker.SkillsDisplay}" TextColor="Gray" FontAttributes="Italic"/>
+
+                </VerticalStackLayout>
+            </Frame>
+
+            <Label Text="Active Jobs" FontSize="18" FontAttributes="Bold" Margin="0,5,0,0"/>
+            <CollectionView ItemsSource="{Binding ActiveJobs}" HeightRequest="150">
+                <CollectionView.EmptyView>
+                    <Label Text="No active jobs." TextColor="Gray" HorizontalOptions="Center" VerticalOptions="Center"/>
+                </CollectionView.EmptyView>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:JobApplicationDetail">
+                        <Frame Padding="10" Margin="0,0,0,10" BackgroundColor="White" CornerRadius="8">
+                            <Grid RowDefinitions="Auto, Auto" ColumnDefinitions="*, Auto">
+                                <Label Grid.Row="0" Grid.Column="0" Text="{Binding WorkerName}" FontAttributes="Bold"/>
+                                <Label Grid.Row="1" Grid.Column="0" Text="{Binding JobStatus}" TextColor="Blue" FontSize="12"/>
+                                <Label Grid.Row="0" Grid.Column="1" Text="{Binding NegotiatedRate, StringFormat='{0:C}/hr'}" FontAttributes="Bold"/>
+                                <Label Grid.Row="1" Grid.Column="1" Text="{Binding TotalTimeSpent, StringFormat='Time: {0:hh\\:mm}'}" FontSize="12"/>
+                            </Grid>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <Label Text="Job History" FontSize="18" FontAttributes="Bold" Margin="0,5,0,0"/>
+            <CollectionView ItemsSource="{Binding JobHistory}" HeightRequest="300">
+                <CollectionView.EmptyView>
+                    <Label Text="No job history." TextColor="Gray" HorizontalOptions="Center" VerticalOptions="Center"/>
+                </CollectionView.EmptyView>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:JobApplicationDetail">
+                        <Frame Padding="10" Margin="0,0,0,10" BackgroundColor="#EEEEEE" CornerRadius="8" BorderColor="Transparent">
+                            <Grid RowDefinitions="Auto, Auto" ColumnDefinitions="*, Auto">
+                                <Label Grid.Row="0" Grid.Column="0" Text="{Binding WorkerName}" TextColor="Gray"/>
+                                <Label Grid.Row="1" Grid.Column="0" Text="{Binding JobStatus}" FontSize="12" TextColor="Gray"/>
+                                <VerticalStackLayout Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" HorizontalOptions="End">
+                                    <Label Text="{Binding TotalTimeSpent, StringFormat='Time: {0:hh\\:mm}'}" FontSize="12" TextColor="Black"/>
+
+                                    <Label FontSize="10" HorizontalOptions="End">
+                                        <Label.Triggers>
+                                            <DataTrigger TargetType="Label" Binding="{Binding IsPaid}" Value="True">
+                                                <Setter Property="Text" Value="Paid"/>
+                                                <Setter Property="TextColor" Value="Green"/>
+                                            </DataTrigger>
+                                            <DataTrigger TargetType="Label" Binding="{Binding IsPaid}" Value="False">
+                                                <Setter Property="Text" Value="Unpaid"/>
+                                                <Setter Property="TextColor" Value="Red"/>
+                                            </DataTrigger>
+                                        </Label.Triggers>
+                                    </Label>
+
+                                </VerticalStackLayout>
+                            </Grid>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

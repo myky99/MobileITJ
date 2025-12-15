@@ -12,12 +12,10 @@ namespace MobileITJ.ViewModels
         private readonly IAuthenticationService _auth;
         private readonly IPopupService _popupService;
 
-        // --- 👇 FIX: This is a list of workers, not jobs 👇 ---
         public ObservableCollection<WorkerDetail> ActiveWorkers { get; } = new ObservableCollection<WorkerDetail>();
         public ObservableCollection<WorkerReport> MyFiledWorkerReports { get; } = new ObservableCollection<WorkerReport>();
 
         public Command LoadDataCommand { get; }
-        // --- 👇 FIX: The command expects a WorkerDetail 👇 ---
         public Command<WorkerDetail> FileReportCommand { get; }
 
         public Command NavigateCreateJobCommand { get; }
@@ -31,7 +29,6 @@ namespace MobileITJ.ViewModels
             _auth = auth;
             _popupService = popupService;
             LoadDataCommand = new Command(async () => await OnLoadDataAsync());
-            // --- 👇 FIX: The command is created with WorkerDetail 👇 ---
             FileReportCommand = new Command<WorkerDetail>(async (worker) => await OnFileReportAsync(worker));
 
             LogoutCommand = new Command(async () => await OnLogoutAsync());
@@ -54,14 +51,12 @@ namespace MobileITJ.ViewModels
 
             try
             {
-                // --- 👇 FIX: Load all active workers 👇 ---
                 ActiveWorkers.Clear();
                 var allWorkers = await _auth.GetAllWorkersAsync();
                 foreach (var worker in allWorkers.Where(w => w.IsActive))
                 {
                     ActiveWorkers.Add(worker);
                 }
-                // --- END OF FIX ---
 
                 MyFiledWorkerReports.Clear();
                 var myReports = await _auth.GetMyFiledWorkerReportsAsync();
@@ -76,21 +71,34 @@ namespace MobileITJ.ViewModels
             }
         }
 
-        // --- 👇 FIX: The method signature now takes a WorkerDetail 👇 ---
         private async Task OnFileReportAsync(WorkerDetail worker)
         {
             if (worker == null) return;
 
+            // 1. Get the list of jobs where this worker was hired by the current customer
+            var myJobsWithWorkers = await _auth.GetMyJobsWithWorkerAsync();
+
+            // 2. Find the job associated with this specific worker
+            // (We assume the latest job if multiple exist)
+            var jobLink = myJobsWithWorkers.FirstOrDefault(j => j.WorkerName == worker.FullName);
+
+            // If no job is found, we can't file a specific report (or we create a dummy job reference if allowed)
+            if (jobLink == null || jobLink.Job == null)
+            {
+                await _popupService.DisplayAlert("Error", "You can only report workers you have hired.", "OK");
+                return;
+            }
+
             string reportMessage = await _popupService.DisplayPrompt(
                 "File Report",
-                $"Please describe the issue with {worker.FullName}.", // Now correctly uses worker name
+                $"Please describe the issue with {worker.FullName} regarding the job '{jobLink.Job.JobDescription}'.",
                 "Submit Report", "Cancel", "e.g., Worker was unprofessional...");
 
             if (string.IsNullOrWhiteSpace(reportMessage))
                 return;
 
-            // --- 👇 FIX: This call now passes the correct object type 👇 ---
-            var (success, message) = await _auth.FileWorkerReportAsync(worker, reportMessage);
+            // 3. FIX: Now we pass THREE arguments: Worker, Job, and Message
+            var (success, message) = await _auth.FileWorkerReportAsync(worker, jobLink.Job, reportMessage);
 
             if (success)
             {

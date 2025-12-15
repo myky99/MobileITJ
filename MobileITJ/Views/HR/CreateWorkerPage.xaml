@@ -9,6 +9,11 @@
 
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="15">
+            <Image 
+                Source="logo.jpg"
+                HeightRequest="300"
+                WidthRequest="400"
+                HorizontalOptions="Center" />
 
             <Label Text="Create New Worker"
                    FontSize="22"
@@ -20,7 +25,20 @@
                 <Entry Placeholder="First Name" Text="{Binding FirstName}" />
                 <Entry Placeholder="Last Name" Text="{Binding LastName}" />
                 <Entry Placeholder="Email" Text="{Binding Email}" Keyboard="Email" />
-                <Entry Placeholder="Skills (comma-separated, e.g. plumbing, wiring)" Text="{Binding SkillSetText}" />
+
+                <Label Text="Primary Skill" FontAttributes="Bold" TextColor="Gray"/>
+                <Frame Padding="0" BorderColor="LightGray" CornerRadius="5" HasShadow="False">
+                    <Picker Title="Select Skill"
+                            ItemsSource="{Binding AvailableSkills}"
+                            SelectedItem="{Binding SelectedSkill}"
+                            TextColor="Black" 
+                            TitleColor="Gray"/>
+                </Frame>
+
+                <Entry Placeholder="Type specific skill..." 
+                       Text="{Binding CustomSkillEntry}"
+                       IsVisible="{Binding IsCustomSkillVisible}"
+                       Margin="0,5,0,0"/>
                 <Entry Placeholder="Rate Per Hour" Text="{Binding RatePerHour}" Keyboard="Numeric" />
 
                 <Button Text="Create Worker Account"

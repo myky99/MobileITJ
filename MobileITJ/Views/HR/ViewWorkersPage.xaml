@@ -16,8 +16,13 @@
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:WorkerDetail">
                     <Frame Padding="15" Margin="10,5" CornerRadius="10" BorderColor="#E0E0E0" HasShadow="True">
-                        <Grid RowDefinitions="Auto, Auto, Auto" ColumnDefinitions="*, Auto">
 
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:ViewWorkersViewModel}}, Path=GoToDetailsCommand}"
+                                                  CommandParameter="{Binding .}" />
+                        </Frame.GestureRecognizers>
+
+                        <Grid RowDefinitions="Auto, Auto" ColumnDefinitions="*, Auto">
                             <Label Grid.Row="0" Grid.Column="0" 
                                    Text="{Binding FullName}" 
                                    FontAttributes="Bold" FontSize="18"/>
@@ -30,35 +35,18 @@
                                    Text="{Binding SkillsDisplay}" 
                                    FontSize="14" FontAttributes="Italic" Margin="0,5,0,0"/>
 
-                            <HorizontalStackLayout Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" 
-                                                   Spacing="10" Margin="0,15,0,0" VerticalOptions="Center">
-
-                                <Label VerticalOptions="Center" FontAttributes="Bold">
-                                    <Label.Triggers>
-                                        <DataTrigger TargetType="Label" Binding="{Binding IsActive}" Value="True">
-                                            <Setter Property="Text" Value="Active" />
-                                            <Setter Property="TextColor" Value="{StaticResource SecondaryColor}" />
-                                        </DataTrigger>
-                                        <DataTrigger TargetType="Label" Binding="{Binding IsActive}" Value="False">
-                                            <Setter Property="Text" Value="Deactivated" />
-                                            <Setter Property="TextColor" Value="{StaticResource DangerColor}" />
-                                        </DataTrigger>
-                                    </Label.Triggers>
-                                </Label>
-
-                                <Switch IsToggled="{Binding IsActive}"
-                                        ThumbColor="{StaticResource PrimaryColor}"
-                                        Toggled="OnWorkerToggled" />
-
-                                <Button Text="Add Skill" 
-                                        Style="{StaticResource TopTabButton}"
-                                        BackgroundColor="White"
-                                        TextColor="{StaticResource PrimaryColor}"
-                                        BorderColor="{StaticResource PrimaryColor}"
-                                        FontSize="10" Padding="8,4"
-                                        Clicked="OnAddSkillClicked" />
-
-                            </HorizontalStackLayout>
+                            <Label Grid.Row="1" Grid.Column="1" FontSize="10" VerticalOptions="End" HorizontalOptions="End">
+                                <Label.Triggers>
+                                    <DataTrigger TargetType="Label" Binding="{Binding IsActive}" Value="True">
+                                        <Setter Property="Text" Value="Active" />
+                                        <Setter Property="TextColor" Value="Green" />
+                                    </DataTrigger>
+                                    <DataTrigger TargetType="Label" Binding="{Binding IsActive}" Value="False">
+                                        <Setter Property="Text" Value="Inactive" />
+                                        <Setter Property="TextColor" Value="Red" />
+                                    </DataTrigger>
+                                </Label.Triggers>
+                            </Label>
                         </Grid>
                     </Frame>
                 </DataTemplate>

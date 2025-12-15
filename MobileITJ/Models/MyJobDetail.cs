@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Collections.Generic;
 
 namespace MobileITJ.Models
 {
@@ -12,6 +13,9 @@ namespace MobileITJ.Models
 
         public Job Job { get; set; }
         public int ApplicationId { get; set; }
+
+        // 👇 NEW: Store the status (Pending/Accepted)
+        public ApplicationStatus Status { get; set; }
 
         public bool IsClockedIn
         {

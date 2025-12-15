@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodel="clr-namespace:MobileITJ.ViewModels"
+             x:Class="MobileITJ.Views.HR.ReportDetailsPage"
+             Title="Report Details"
+             BackgroundColor="#F5F5F5">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="20">
+
+            <Frame CornerRadius="10" BackgroundColor="White" HasShadow="True">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="REPORT MESSAGE" FontSize="12" TextColor="Gray" FontAttributes="Bold"/>
+                    <Label Text="{Binding Report.ReportMessage}" FontSize="16" TextColor="Black" />
+                    <Label Text="{Binding Report.DateFiled, StringFormat='Filed on {0:MMMM dd, yyyy}'}" TextColor="Gray" FontSize="12"/>
+                </VerticalStackLayout>
+            </Frame>
+
+            <Frame CornerRadius="10" BackgroundColor="#FFEBEE" BorderColor="Red" HasShadow="True">
+                <VerticalStackLayout Spacing="5">
+                    <Label Text="REPORTED WORKER" FontSize="12" TextColor="#D32F2F" FontAttributes="Bold"/>
+                    <Label Text="{Binding Report.WorkerName}" FontSize="18" FontAttributes="Bold" TextColor="Black"/>
+                    <Label Text="{Binding Report.WorkerUserId, StringFormat='User ID: {0}'}" TextColor="Gray"/>
+                </VerticalStackLayout>
+            </Frame>
+
+            <Frame CornerRadius="10" BackgroundColor="#E3F2FD" BorderColor="#2196F3" HasShadow="True">
+                <VerticalStackLayout Spacing="5">
+                    <Label Text="REPORTED BY (CUSTOMER)" FontSize="12" TextColor="#1976D2" FontAttributes="Bold"/>
+                    <Label Text="{Binding Report.CustomerName}" FontSize="18" FontAttributes="Bold" TextColor="Black"/>
+                    <Label Text="{Binding Report.CustomerEmail}" TextColor="Gray" TextDecorations="Underline"/>
+                </VerticalStackLayout>
+            </Frame>
+
+            <Frame CornerRadius="10" BackgroundColor="White" HasShadow="True">
+                <VerticalStackLayout Spacing="5">
+                    <Label Text="RELATED JOB" FontSize="12" TextColor="Gray" FontAttributes="Bold"/>
+                    <Label Text="{Binding Report.JobDescription}" FontSize="16" TextColor="Black" FontAttributes="Bold"/>
+                    <Label Text="{Binding Report.JobId, StringFormat='Job Ref ID: #{0}'}" TextColor="Gray" FontSize="12"/>
+                </VerticalStackLayout>
+            </Frame>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

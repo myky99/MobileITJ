@@ -9,11 +9,16 @@
     xmlns:hr="clr-namespace:MobileITJ.Views.HR"
     x:Class="MobileITJ.AppShell"
     Shell.FlyoutBehavior="Disabled"
-    
     Shell.TabBarBackgroundColor="White"
     Shell.TabBarTitleColor="DarkBlue"
     Shell.TabBarUnselectedColor="Gray">
 
+    <Shell.ToolbarItems>
+        <ToolbarItem Text="Logout"
+                     Order="Primary"
+                     Priority="0"
+                     Clicked="OnLogoutClicked"/>
+    </Shell.ToolbarItems>
     <ShellContent
         Title="Splash"
         ContentTemplate="{DataTemplate shared:SplashPage}"
@@ -35,7 +40,7 @@
     <TabBar Route="HRDashboardPage">
         <ShellContent Title="Create" ContentTemplate="{DataTemplate hr:CreateWorkerPage}" Route="CreateWorkerPage" />
         <ShellContent Title="Workers" ContentTemplate="{DataTemplate hr:ViewWorkersPage}" Route="ViewWorkersPage" />
-        <ShellContent Title="Reports" ContentTemplate="{DataTemplate hr:ViewJobsReportPage}" Route="ViewJobsReportPage" />
+        <ShellContent Title="Reports" ContentTemplate="{DataTemplate hr:ViewJobsReportPage}" Route="ViewAllWorkerReportsPage" />
         <ShellContent Title="Clients" ContentTemplate="{DataTemplate hr:ViewCustomersPage}" Route="ViewCustomersPage" />
     </TabBar>
 

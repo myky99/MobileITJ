@@ -1,88 +1,85 @@
-﻿using System.Threading.Tasks;
+﻿using MobileITJ.Services;
+using System.Threading.Tasks;
 using Microsoft.Maui.Controls;
-using MobileITJ.Services;
-using MobileITJ.Models;
-using System;
 
-namespace MobileITJ.ViewModels;
-public class LoginViewModel : BaseViewModel
+namespace MobileITJ.ViewModels
 {
-    private readonly IAuthenticationService _auth;
-    private string _email = "";
-    private string _password = "";
-
-    public string Email { get => _email; set => SetProperty(ref _email, value); }
-    public string Password { get => _password; set => SetProperty(ref _password, value); }
-    public Command LoginCommand { get; }
-    public Command NavigateRegisterCommand { get; }
-
-    public LoginViewModel(IAuthenticationService auth)
+    public class LoginViewModel : BaseViewModel
     {
-        _auth = auth;
-        LoginCommand = new Command(async () => await OnLoginAsync());
-        NavigateRegisterCommand = new Command(async () => await Shell.Current.GoToAsync("//RegisterPage"));
-    }
+        private readonly IAuthenticationService _auth;
 
-    private async Task OnLoginAsync()
-    {
-        if (IsBusy) return;
-        IsBusy = true;
-        ErrorMessage = "";
+        private string _email;
+        public string Email { get => _email; set => SetProperty(ref _email, value); }
 
-        try
+        private string _password;
+        public string Password { get => _password; set => SetProperty(ref _password, value); }
+
+        public Command LoginCommand { get; }
+        public Command NavigateRegisterCommand { get; }
+
+        public LoginViewModel(IAuthenticationService auth)
         {
-            var (success, message, userType, isFirstLogin) = await _auth.LoginAsync(Email, Password);
+            _auth = auth;
+            LoginCommand = new Command(async () => await OnLoginAsync());
+            NavigateRegisterCommand = new Command(async () => await Shell.Current.GoToAsync("//RegisterPage"));
+        }
 
-            if (!success)
+        private async Task OnLoginAsync()
+        {
+            if (IsBusy) return;
+            IsBusy = true;
+
+            // 1. Validate Input
+            if (string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(Password))
             {
-                // --- 👇 THIS IS THE NEW LOGIC 👇 ---
-                if (message == "Account deactivated.")
-                {
-                    await Shell.Current.GoToAsync("DeactivatedAccountPage");
-                }
-                else
-                {
-                    ErrorMessage = message;
-                }
-                // --- END OF NEW LOGIC ---
-
+                await Application.Current.MainPage.DisplayAlert("Error", "Please enter email and password.", "OK");
                 IsBusy = false;
                 return;
             }
 
+            // 2. Attempt Login
+            var (success, message, userType, isFirstLogin) = await _auth.LoginAsync(Email, Password);
+
+            if (!success)
+            {
+                await Application.Current.MainPage.DisplayAlert("Error", message, "OK");
+                IsBusy = false;
+                return;
+            }
+
+            // 3. Handle First Time Login
             if (isFirstLogin)
             {
-                await Application.Current.MainPage.DisplayAlert("Welcome!", "Please update your temporary password.", "OK");
+                await Application.Current.MainPage.DisplayAlert("Welcome", "This is your first login. Please change your password.", "OK");
                 await Shell.Current.GoToAsync("ChangePasswordPage");
                 IsBusy = false;
                 return;
             }
 
-            if (userType == null)
+            // 4. Initialize the Main App (Enable Tabs & Global Logout)
+            Application.Current.MainPage = new AppShell(_auth);
+
+            // Allow a tiny delay for the new Shell to initialize
+            await Task.Delay(100);
+
+            // 5. Get User Name for the Splash Screen
+            var currentUser = await _auth.GetCurrentUserAsync();
+            string userName = currentUser?.FirstName ?? "User";
+
+            // 6. Determine the Final Destination (Dashboard)
+            string targetDashboard = userType switch
             {
-                ErrorMessage = "User data missing after login.";
-                IsBusy = false;
-                return;
-            }
+                Models.UserType.HR => "//HRDashboardPage",
+                Models.UserType.Customer => "//CustomerDashboardPage",
+                Models.UserType.Worker => "//WorkerDashboardPage",
+                _ => "//LoginPage"
+            };
 
-            string userName = (await _auth.GetCurrentUserAsync())?.FirstName ?? "User";
-            string nextRoute = "";
+            // 7. 👇 THE FIX: Go to WelcomePage FIRST, passing the Name and Next Route 👇
+            // This makes the "Hello [Name]" screen appear before the dashboard.
+            await Shell.Current.GoToAsync($"WelcomePage?userName={userName}&nextRoute={targetDashboard}");
 
-            switch (userType)
-            {
-                case UserType.Customer:
-                    nextRoute = "//CustomerDashboardPage";
-                    break;
-                case UserType.Worker:
-                    nextRoute = "//WorkerDashboardPage";
-                    break;
-                case UserType.HR:
-                    nextRoute = "//HRDashboardPage";
-                    break;
-            }
-
-            await Shell.Current.GoToAsync($"WelcomePage?userName={userName}&nextRoute={Uri.EscapeDataString(nextRoute)}");
+            IsBusy = false;
         }
-        finally { IsBusy = false; }
     }
 }

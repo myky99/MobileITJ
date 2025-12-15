@@ -9,6 +9,7 @@ namespace MobileITJ.Models
     {
         private int _id;
         private int _customerId;
+        private string _title = ""; // Ensure this exists from previous steps
         private string _jobDescription = "";
         private string _location = "";
         private decimal _ratePerHour;
@@ -17,10 +18,12 @@ namespace MobileITJ.Models
         private DateTime _datePosted;
         private JobStatus _status = JobStatus.Open;
 
-        // --- 👇 Rating properties have been REMOVED from here ---
+        // 👇 NEW: Reason for failure (optional)
+        private string _incompleteReason = "";
 
         public int Id { get => _id; set => SetProperty(ref _id, value); }
         public int CustomerId { get => _customerId; set => SetProperty(ref _customerId, value); }
+        public string Title { get => _title; set => SetProperty(ref _title, value); }
         public string JobDescription { get => _jobDescription; set => SetProperty(ref _jobDescription, value); }
         public string Location { get => _location; set => SetProperty(ref _location, value); }
         public decimal RatePerHour { get => _ratePerHour; set => SetProperty(ref _ratePerHour, value); }
@@ -29,6 +32,8 @@ namespace MobileITJ.Models
         public DateTime DatePosted { get => _datePosted; set => SetProperty(ref _datePosted, value); }
         public JobStatus Status { get => _status; set => SetProperty(ref _status, value); }
 
+        // 👇 NEW PROPERTY
+        public string IncompleteReason { get => _incompleteReason; set => SetProperty(ref _incompleteReason, value); }
 
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string name = "") =>

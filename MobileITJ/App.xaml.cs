@@ -1,11 +1,23 @@
-﻿namespace MobileITJ
+﻿using MobileITJ.Services;
+
+namespace MobileITJ
 {
     public partial class App : Application
     {
-        public App()
+        private readonly IAuthenticationService _authService;
+
+        public App(IAuthenticationService authService)
         {
             InitializeComponent();
-            MainPage = new AppShell();
+            _authService = authService;
+
+            MainPage = new AppShell(_authService);
+        }
+
+        protected override async void OnStart()
+        {
+            base.OnStart();
+            await _authService.InitializeAsync();
         }
     }
 }
