@@ -12,12 +12,20 @@
                  IsRefreshing="{Binding IsBusy}">
         <ScrollView>
             <VerticalStackLayout>
+
                 <CollectionView ItemsSource="{Binding Customers}"
                                 EmptyView="No customers found.">
 
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="models:User">
                             <Frame Padding="15" Margin="10,5" CornerRadius="10" BorderColor="#E0E0E0" HasShadow="True">
+
+                                <Frame.GestureRecognizers>
+                                    <TapGestureRecognizer 
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:ViewCustomersViewModel}}, Path=GoToCustomerDetailsCommand}"
+                                        CommandParameter="{Binding .}" />
+                                </Frame.GestureRecognizers>
+
                                 <VerticalStackLayout Spacing="5">
                                     <Label FontAttributes="Bold" FontSize="18">
                                         <Label.FormattedText>
@@ -28,21 +36,14 @@
                                             </FormattedString>
                                         </Label.FormattedText>
                                     </Label>
-                                    <Label Text="{Binding Email}" 
-                                           FontSize="14" 
-                                           TextColor="Gray" />
+                                    <Label Text="{Binding Email}" FontSize="14" TextColor="Gray" />
+                                    <Label Text="Tap to view job history >" FontSize="10" TextColor="Blue" HorizontalOptions="End"/>
                                 </VerticalStackLayout>
                             </Frame>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
 
                 </CollectionView>
-
-                <Button Text="Logout"
-                        Command="{Binding LogoutCommand}"
-                        BackgroundColor="{StaticResource DangerColor}"
-                        Margin="20"
-                        HorizontalOptions="Fill" />
             </VerticalStackLayout>
         </ScrollView>
     </RefreshView>

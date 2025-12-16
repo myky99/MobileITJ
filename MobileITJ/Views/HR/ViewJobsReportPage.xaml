@@ -5,65 +5,122 @@
              xmlns:viewmodel="clr-namespace:MobileITJ.ViewModels"
              x:DataType="viewmodel:ViewJobsReportViewModel"
              x:Class="MobileITJ.Views.HR.ViewJobsReportPage"
-             Title="Worker Reports"
+             Title="HR Reports &amp; Stats"
              BackgroundColor="{StaticResource BackgroundColor}">
 
-    <RefreshView Grid.Row="2" 
-                 Command="{Binding LoadReportsCommand}" 
+    <RefreshView Command="{Binding LoadReportsCommand}" 
                  IsRefreshing="{Binding IsBusy}">
-        <CollectionView ItemsSource="{Binding WorkerReports}"
-                        EmptyView="No workers found.">
+        <ScrollView>
+            <VerticalStackLayout Padding="15" Spacing="20">
 
-            <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="models:HrReportDetail">
-                    <Frame Padding="15" Margin="10,5" CornerRadius="10" BorderColor="#E0E0E0" HasShadow="True">
-                        <VerticalStackLayout Spacing="10">
+                <Label Text="System Overview" FontSize="20" FontAttributes="Bold" TextColor="{StaticResource PrimaryColor}"/>
 
-                            <Grid ColumnDefinitions="*, Auto">
-                                <Label Grid.Column="0"
-                                       Text="{Binding Worker.FullName}" 
-                                       FontAttributes="Bold" FontSize="18"/>
-                                <Label Grid.Column="1"
-                                       Text="{Binding Worker.RatePerHour, StringFormat='{0:C}/hr'}"
-                                       FontAttributes="Bold"
-                                       TextColor="{StaticResource PrimaryColor}"
-                                       VerticalOptions="Center" />
-                            </Grid>
+                <Grid ColumnDefinitions="*, *" RowDefinitions="Auto, Auto" ColumnSpacing="10" RowSpacing="10">
 
-                            <Label FontSize="14">
-                                <Label.FormattedText>
-                                    <FormattedString>
-                                        <Span Text="Status: " FontAttributes="Bold" />
-                                        <Span Text="{Binding ReportCountDisplay}" />
-                                    </FormattedString>
-                                </Label.FormattedText>
-                                <Label.Triggers>
-                                    <DataTrigger TargetType="Label" Binding="{Binding HasReports}" Value="True">
-                                        <Setter Property="TextColor" Value="{StaticResource DangerColor}" />
-                                    </DataTrigger>
-                                </Label.Triggers>
-                            </Label>
-
-                            <VerticalStackLayout BindableLayout.ItemsSource="{Binding Reports}"
-                                                 IsVisible="{Binding HasReports}"
-                                                 Spacing="5" Margin="10,5,0,0">
-                                <BindableLayout.ItemTemplate>
-                                    <DataTemplate x:DataType="models:WorkerReport">
-                                        <Border Stroke="LightGray" StrokeThickness="1" Padding="10">
-                                            <VerticalStackLayout>
-                                                <Label Text="{Binding ReportMessage}" FontAttributes="Italic" />
-                                                <Label Text="{Binding DateFiled, StringFormat='Filed on: {0:d}'}" FontSize="10" TextColor="Gray" />
-                                            </VerticalStackLayout>
-                                        </Border>
-                                    </DataTemplate>
-                                </BindableLayout.ItemTemplate>
-                            </VerticalStackLayout>
-
+                    <Frame Grid.Row="0" Grid.Column="0" BackgroundColor="{StaticResource PrimaryColor}" Padding="15" CornerRadius="10" BorderColor="Transparent" HasShadow="True">
+                        <VerticalStackLayout>
+                            <Label Text="{Binding TotalWorkers}" FontSize="28" FontAttributes="Bold" TextColor="White" HorizontalOptions="Center"/>
+                            <Label Text="Total Workers" FontSize="12" TextColor="White" HorizontalOptions="Center"/>
                         </VerticalStackLayout>
                     </Frame>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
 
-        </CollectionView>
+                    <Frame Grid.Row="0" Grid.Column="1" BackgroundColor="{StaticResource SecondaryColor}" Padding="15" CornerRadius="10" BorderColor="Transparent" HasShadow="True">
+                        <VerticalStackLayout>
+                            <Label Text="{Binding TotalJobs}" FontSize="28" FontAttributes="Bold" TextColor="White" HorizontalOptions="Center"/>
+                            <Label Text="Jobs Posted" FontSize="12" TextColor="White" HorizontalOptions="Center"/>
+                        </VerticalStackLayout>
+                    </Frame>
+
+                    <Frame Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" BackgroundColor="White" Padding="15" CornerRadius="10" BorderColor="#E0E0E0" HasShadow="True">
+                        <HorizontalStackLayout HorizontalOptions="Center" Spacing="10">
+                            <Label Text="💰 Total Payouts:" FontSize="16" FontAttributes="Bold" TextColor="Black" VerticalOptions="Center"/>
+                            <Label Text="{Binding TotalPayouts, StringFormat='Php {0:N2}'}" FontSize="20" FontAttributes="Bold" TextColor="Green" VerticalOptions="Center"/>
+                        </HorizontalStackLayout>
+                    </Frame>
+                </Grid>
+                <BoxView HeightRequest="1" Color="Gray" Margin="0,10" />
+
+                <Label Text="Worker Reports" FontSize="20" FontAttributes="Bold" />
+
+                <CollectionView ItemsSource="{Binding WorkerReports}"
+                                EmptyView="No workers found.">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:HrReportDetail">
+                            <Frame Padding="15" Margin="0,5" CornerRadius="10" BorderColor="#E0E0E0" HasShadow="True">
+
+                                <Frame.GestureRecognizers>
+                                    <TapGestureRecognizer 
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:ViewJobsReportViewModel}}, Path=ToggleExpandCommand}"
+                                        CommandParameter="{Binding .}" />
+                                </Frame.GestureRecognizers>
+
+                                <VerticalStackLayout Spacing="10">
+                                    <Grid ColumnDefinitions="*, Auto">
+                                        <VerticalStackLayout Grid.Column="0">
+                                            <Label Text="{Binding Worker.FullName}" FontAttributes="Bold" FontSize="18"/>
+                                            <Label Text="{Binding Worker.WorkerId}" FontSize="12" TextColor="Gray"/>
+                                        </VerticalStackLayout>
+                                        <Label Grid.Column="1"
+                                               Text="{Binding Worker.RatePerHour, StringFormat='{0:C}/hr'}"
+                                               FontAttributes="Bold"
+                                               TextColor="{StaticResource PrimaryColor}"
+                                               VerticalOptions="Center" />
+                                    </Grid>
+
+                                    <Label FontSize="14">
+                                        <Label.FormattedText>
+                                            <FormattedString>
+                                                <Span Text="Status: " FontAttributes="Bold" />
+                                                <Span Text="{Binding ReportCountDisplay}" />
+                                            </FormattedString>
+                                        </Label.FormattedText>
+                                        <Label.Triggers>
+                                            <DataTrigger TargetType="Label" Binding="{Binding HasReports}" Value="True">
+                                                <Setter Property="TextColor" Value="{StaticResource DangerColor}" />
+                                            </DataTrigger>
+                                        </Label.Triggers>
+                                    </Label>
+
+                                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding Reports}"
+                                                         IsVisible="{Binding IsExpanded}"
+                                                         Spacing="8" Margin="0,10,0,0">
+
+                                        <Label Text="--- Report Details ---" 
+                                               FontSize="10" TextColor="Gray" HorizontalOptions="Center" 
+                                               IsVisible="{Binding HasReports}"/>
+
+                                        <BindableLayout.ItemTemplate>
+                                            <DataTemplate x:DataType="models:WorkerReport">
+                                                <Border Stroke="LightGray" StrokeThickness="1" 
+                                                        Padding="10" BackgroundColor="#FAFAFA" 
+                                                        StrokeShape="RoundRectangle 5">
+                                                    <VerticalStackLayout Spacing="3">
+                                                        <Label Text="{Binding ReportMessage}" FontAttributes="Italic" TextColor="#333"/>
+                                                        <BoxView Color="LightGray" HeightRequest="1" Margin="0,5"/>
+                                                        <Grid ColumnDefinitions="*,*">
+                                                            <VerticalStackLayout Grid.Column="0">
+                                                                <Label Text="REPORTED BY:" FontSize="10" TextColor="Gray" FontAttributes="Bold"/>
+                                                                <Label Text="{Binding CustomerName}" FontSize="12"/>
+                                                            </VerticalStackLayout>
+                                                            <VerticalStackLayout Grid.Column="1" HorizontalOptions="End">
+                                                                <Label Text="DATE:" FontSize="10" TextColor="Gray" FontAttributes="Bold" HorizontalOptions="End"/>
+                                                                <Label Text="{Binding DateFiled, StringFormat='{0:MM/dd/yyyy}'}" FontSize="12" HorizontalOptions="End"/>
+                                                            </VerticalStackLayout>
+                                                        </Grid>
+                                                        <Label Text="JOB CONTEXT:" FontSize="10" TextColor="Gray" FontAttributes="Bold" Margin="0,5,0,0"/>
+                                                        <Label Text="{Binding JobDescription}" FontSize="12" FontAttributes="Bold"/>
+                                                    </VerticalStackLayout>
+                                                </Border>
+                                            </DataTemplate>
+                                        </BindableLayout.ItemTemplate>
+                                    </VerticalStackLayout>
+
+                                </VerticalStackLayout>
+                            </Frame>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </VerticalStackLayout>
+        </ScrollView>
     </RefreshView>
 </ContentPage>

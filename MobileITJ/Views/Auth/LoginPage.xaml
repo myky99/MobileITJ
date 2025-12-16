@@ -11,11 +11,10 @@
         <VerticalStackLayout 
             Spacing="20" 
             Padding="30"
-            VerticalOptions="CenterAndExpand"
             HorizontalOptions="Center">
 
             <Image 
-                Source="logo.png"
+                Source="logo.jpg"
                 HeightRequest="300"
                 WidthRequest="400"
                 HorizontalOptions="Center" />

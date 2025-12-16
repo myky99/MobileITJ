@@ -13,11 +13,9 @@ namespace MobileITJ.ViewModels
         public ObservableCollection<WorkerDetail> Workers { get; } = new ObservableCollection<WorkerDetail>();
 
         public Command LoadWorkersCommand { get; }
-        public Command<WorkerDetail> ToggleActivationCommand { get; }
-        public Command<WorkerDetail> AddSkillCommand { get; }
+        public Command<WorkerDetail> GoToDetailsCommand { get; } // New Command
         public Command LogoutCommand { get; }
 
-        // --- Navigation Commands for Tabs ---
         public Command NavigateCreateWorkerCommand { get; }
         public Command NavigateViewWorkersCommand { get; }
         public Command NavigateJobReportsCommand { get; }
@@ -27,20 +25,20 @@ namespace MobileITJ.ViewModels
         {
             _auth = auth;
             LoadWorkersCommand = new Command(async () => await OnLoadWorkersAsync());
-            AddSkillCommand = new Command<WorkerDetail>(async (worker) => await OnAddSkillAsync(worker));
-            ToggleActivationCommand = new Command<WorkerDetail>(async (worker) => await OnToggleActivationAsync(worker));
             LogoutCommand = new Command(async () => await OnLogoutAsync());
 
-            // --- Tab Navigation ---
+            // Navigation Commands
             NavigateCreateWorkerCommand = new Command(async () => await Shell.Current.GoToAsync("../CreateWorkerPage"));
             NavigateViewWorkersCommand = new Command(async () => await Shell.Current.GoToAsync("../ViewWorkersPage"));
             NavigateJobReportsCommand = new Command(async () => await Shell.Current.GoToAsync("../ViewJobsReportPage"));
             NavigateCustomersCommand = new Command(async () => await Shell.Current.GoToAsync("../ViewCustomersPage"));
+
+            // New: Navigate to Details Page
+            GoToDetailsCommand = new Command<WorkerDetail>(async (worker) => await OnGoToDetailsAsync(worker));
         }
 
         public async Task OnAppearing()
         {
-            // This is a special task to load data when the page appears
             await OnLoadWorkersAsync();
         }
 
@@ -48,7 +46,6 @@ namespace MobileITJ.ViewModels
         {
             if (IsBusy) return;
             IsBusy = true;
-
             try
             {
                 Workers.Clear();
@@ -58,77 +55,27 @@ namespace MobileITJ.ViewModels
                     Workers.Add(worker);
                 }
             }
-            finally
-            {
-                IsBusy = false;
-            }
+            finally { IsBusy = false; }
         }
 
-        private async Task OnToggleActivationAsync(WorkerDetail worker)
+        private async Task OnGoToDetailsAsync(WorkerDetail worker)
         {
             if (worker == null) return;
 
-            string status = worker.IsActive ? "activate" : "deactivate";
-            bool confirm = await Application.Current.MainPage.DisplayAlert(
-                "Confirm Action",
-                $"Are you sure you want to {status} {worker.FullName}?",
-                "Yes",
-                "No");
-
-            if (!confirm)
+            // Pass the worker object to the new page using a Dictionary
+            var navigationParameter = new Dictionary<string, object>
             {
-                // Revert the toggle
-                worker.IsActive = !worker.IsActive;
-                return;
-            }
+                { "Worker", worker }
+            };
 
-            await _auth.UpdateWorkerProfileAsync(worker);
-            
-            string message = worker.IsActive ? "activated" : "deactivated";
-            await Application.Current.MainPage.DisplayAlert("Success", $"{worker.FullName} has been {message}.", "OK");
-        }
-
-        private async Task OnAddSkillAsync(WorkerDetail worker)
-        {
-            if (worker == null) return;
-
-            string newSkill = await Application.Current.MainPage.DisplayPromptAsync(
-                "Add Skill", 
-                $"Enter new skill for {worker.FullName}:",
-                "Add",
-                "Cancel",
-                "e.g., Plumbing");
-
-            if (!string.IsNullOrWhiteSpace(newSkill))
-            {
-                var currentSkills = new List<string>(worker.Skills);
-                
-                // Check for duplicates
-                if (currentSkills.Contains(newSkill.Trim()))
-                {
-                    await Application.Current.MainPage.DisplayAlert("Duplicate Skill", "This skill already exists for this worker.", "OK");
-                    return;
-                }
-
-                currentSkills.Add(newSkill.Trim());
-                worker.Skills = currentSkills;
-
-                await _auth.UpdateWorkerProfileAsync(worker);
-                
-                await Application.Current.MainPage.DisplayAlert("Success", $"Skill '{newSkill}' added successfully!", "OK");
-            }
+            // Navigate to the registered route
+            await Shell.Current.GoToAsync("WorkerDetailsPage", navigationParameter);
         }
 
         private async Task OnLogoutAsync()
         {
-            bool confirm = await Application.Current.MainPage.DisplayAlert(
-                "Logout", 
-                "Are you sure you want to logout?", 
-                "Yes", 
-                "No");
-
+            bool confirm = await Application.Current.MainPage.DisplayAlert("Logout", "Are you sure?", "Yes", "No");
             if (!confirm) return;
-
             await _auth.LogoutAsync();
             await Shell.Current.GoToAsync("//LoginPage");
         }

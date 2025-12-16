@@ -17,21 +17,25 @@
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:CustomerJobDetail">
                     <Frame Padding="15" Margin="10,5" CornerRadius="10" BorderColor="#E0E0E0" HasShadow="True">
-                        <Grid RowDefinitions="Auto, Auto, Auto, Auto, Auto" ColumnDefinitions="*, Auto">
+                        <Grid RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto" ColumnDefinitions="*, Auto">
 
                             <Label Grid.Row="0" Grid.Column="0" 
-                                   Text="{Binding Job.JobDescription}" 
-                                   FontAttributes="Bold" FontSize="18"/>
+                                   Text="{Binding Job.Title}" 
+                                   FontAttributes="Bold" FontSize="18" TextColor="{StaticResource PrimaryColor}"/>
 
                             <Label Grid.Row="0" Grid.Column="1" 
                                    Text="{Binding Status}" 
                                    FontSize="12" TextColor="Gray" VerticalOptions="Start"/>
 
                             <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
-                                   Text="{Binding Job.Location}" 
-                                   FontSize="14" Margin="0,5,0,0"/>
+                                   Text="{Binding Job.JobDescription}" 
+                                   FontSize="14" Margin="0,2,0,0"/>
 
-                            <Label Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
+                            <Label Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" 
+                                   Text="{Binding Job.Location}" 
+                                   FontSize="14" Margin="0,5,0,0" TextColor="Gray"/>
+
+                            <Label Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"
                                    FontSize="16" FontAttributes="Bold" TextColor="{StaticResource PrimaryColor}" Margin="0,10,0,0">
                                 <Label.FormattedText>
                                     <FormattedString>
@@ -41,45 +45,41 @@
                                 </Label.FormattedText>
                             </Label>
 
-                            <Label Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"
+                            <Label Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2"
                                    Text="{Binding SlotsDisplay}"
                                    FontAttributes="Italic"
                                    TextColor="Gray"
                                    FontSize="14" Margin="0,5,0,0" />
 
-                            <HorizontalStackLayout Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Spacing="10" Margin="0,15,0,0">
-                                <Button Text="View Applications"
+                            <HorizontalStackLayout Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Spacing="10" Margin="0,15,0,0">
+
+                                <Button Text="Workers"
                                         Style="{StaticResource TopTabButton}"
                                         BackgroundColor="{StaticResource SecondaryColor}"
                                         TextColor="White"
-                                        HorizontalOptions="Start"
+                                        HeightRequest="40"
                                         Command="{Binding BindingContext.ViewApplicationsCommand, Source={x:Reference ThisPage}}"
-                                        CommandParameter="{Binding .}">
-                                    <Button.Triggers>
-                                        <DataTrigger TargetType="Button" Binding="{Binding Status}" Value="Ongoing">
-                                            <Setter Property="Text" Value="View Workers" />
-                                        </DataTrigger>
-                                        <DataTrigger TargetType="Button" Binding="{Binding Status}" Value="Completed">
-                                            <Setter Property="Text" Value="View Details" />
-                                        </DataTrigger>
-                                    </Button.Triggers>
-                                </Button>
+                                        CommandParameter="{Binding .}"/>
 
-                                <Button Text="Mark as Complete"
+                                <Button Text="Complete"
                                         Style="{StaticResource TopTabButton}"
-                                        BackgroundColor="{StaticResource PrimaryColor}"
+                                        BackgroundColor="Green"
                                         TextColor="White"
-                                        HorizontalOptions="Start"
+                                        HeightRequest="40"
                                         Command="{Binding BindingContext.CompleteJobCommand, Source={x:Reference ThisPage}}"
                                         CommandParameter="{Binding .}"
-                                        IsEnabled="{Binding CanCompleteJob}">
-                                    <Button.Triggers>
-                                        <DataTrigger TargetType="Button" Binding="{Binding Status}" Value="Completed">
-                                            <Setter Property="IsVisible" Value="False" />
-                                        </DataTrigger>
-                                    </Button.Triggers>
-                                </Button>
+                                        IsVisible="{Binding CanCompleteJob}"/>
+
+                                <Button Text="Failed"
+                                        Style="{StaticResource TopTabButton}"
+                                        BackgroundColor="Red"
+                                        TextColor="White"
+                                        HeightRequest="40"
+                                        Command="{Binding BindingContext.MarkIncompleteCommand, Source={x:Reference ThisPage}}"
+                                        CommandParameter="{Binding .}"
+                                        IsVisible="{Binding CanCompleteJob}"/>
                             </HorizontalStackLayout>
+
                         </Grid>
                     </Frame>
                 </DataTemplate>

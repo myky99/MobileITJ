@@ -10,8 +10,11 @@
 
     <RefreshView Command="{Binding LoadRatingsCommand}" 
                  IsRefreshing="{Binding IsBusy}">
+
         <CollectionView ItemsSource="{Binding RatedJobs}"
-                        EmptyView="You have not received any ratings yet.">
+                        EmptyView="You have not received any ratings yet."
+                        SelectionMode="Single"
+                        SelectedItem="{Binding SelectedRating}">
 
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:RatingDetail">

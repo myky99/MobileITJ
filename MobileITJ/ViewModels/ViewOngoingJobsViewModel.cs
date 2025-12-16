@@ -12,11 +12,14 @@ namespace MobileITJ.ViewModels
     {
         private readonly IAuthenticationService _auth;
         private readonly IPopupService _popupService;
-        public ObservableCollection<MyJobDetail> MyJobs { get; } = new ObservableCollection<MyJobDetail>();
+
+        // 👇 3 SEPARATE LISTS
+        public ObservableCollection<MyJobDetail> PendingApplications { get; } = new ObservableCollection<MyJobDetail>();
+        public ObservableCollection<MyJobDetail> ActiveJobs { get; } = new ObservableCollection<MyJobDetail>();
+        public ObservableCollection<MyJobDetail> JobHistory { get; } = new ObservableCollection<MyJobDetail>();
 
         public Command LoadJobsCommand { get; }
         public Command<MyJobDetail> ToggleClockCommand { get; }
-        // --- ⛔️ CompleteJobCommand REMOVED ⛔️ ---
 
         public Command NavigateViewAvailableJobsCommand { get; }
         public Command NavigateViewOngoingJobsCommand { get; }
@@ -29,7 +32,6 @@ namespace MobileITJ.ViewModels
             _popupService = popupService;
             LoadJobsCommand = new Command(async () => await OnLoadJobsAsync());
             ToggleClockCommand = new Command<MyJobDetail>(async (job) => await OnToggleClockAsync(job));
-            // --- ⛔️ CompleteJobCommand REMOVED ⛔️ ---
 
             NavigateViewAvailableJobsCommand = new Command(async () => await Shell.Current.GoToAsync("../ViewAvailableJobsPage"));
             NavigateViewOngoingJobsCommand = new Command(async () => await Shell.Current.GoToAsync("../ViewOngoingJobsPage"));
@@ -49,11 +51,28 @@ namespace MobileITJ.ViewModels
 
             try
             {
-                MyJobs.Clear();
-                var myJobs = await _auth.GetMyWorkerJobsAsync();
-                foreach (var job in myJobs)
+                PendingApplications.Clear();
+                ActiveJobs.Clear();
+                JobHistory.Clear();
+
+                var allMyJobs = await _auth.GetMyWorkerJobsAsync();
+
+                foreach (var job in allMyJobs)
                 {
-                    MyJobs.Add(job);
+                    // 1. If Job itself is closed (Completed/Incomplete), it goes to History
+                    if (job.Job.Status == JobStatus.Completed || job.Job.Status == JobStatus.Incomplete)
+                    {
+                        JobHistory.Add(job);
+                    }
+                    // 2. If Job is open, check Application Status
+                    else if (job.Status == ApplicationStatus.Pending)
+                    {
+                        PendingApplications.Add(job); // 👈 New Pending Logic
+                    }
+                    else if (job.Status == ApplicationStatus.Accepted)
+                    {
+                        ActiveJobs.Add(job);
+                    }
                 }
             }
             finally
@@ -68,7 +87,6 @@ namespace MobileITJ.ViewModels
 
             if (jobDetail.IsClockedIn)
             {
-                // Clock Out
                 var (success, message, totalTime) = await _auth.ClockOutAsync(jobDetail.ApplicationId);
                 if (success)
                 {
@@ -76,26 +94,14 @@ namespace MobileITJ.ViewModels
                     if (totalTime.HasValue)
                         jobDetail.TotalTimeSpent = totalTime.Value;
                 }
-                else
-                {
-                    await _popupService.DisplayAlert("Error", message, "OK");
-                }
+                else await _popupService.DisplayAlert("Error", message, "OK");
             }
             else
             {
-                // Clock In
                 var (success, message) = await _auth.ClockInAsync(jobDetail.ApplicationId);
-                if (success)
-                {
-                    jobDetail.IsClockedIn = true;
-                }
-                else
-                {
-                    await _popupService.DisplayAlert("Error", message, "OK");
-                }
+                if (success) jobDetail.IsClockedIn = true;
+                else await _popupService.DisplayAlert("Error", message, "OK");
             }
         }
-
-        // --- ⛔️ OnCompleteJobAsync METHOD REMOVED ⛔️ ---
     }
 }
