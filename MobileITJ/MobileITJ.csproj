@@ -164,6 +164,11 @@
 </ItemGroup>
 
 	<ItemGroup>
+	  <AndroidResource Remove="Platforms\Android\Resources\values\styles.xml" />
+	  <AndroidResource Remove="Platforms\Android\Resources\values\themes.xml" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <None Remove="Resources\Images\logo.jpg" />
 	</ItemGroup>
 
