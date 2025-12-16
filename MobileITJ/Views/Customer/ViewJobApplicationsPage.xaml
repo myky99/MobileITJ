@@ -30,9 +30,29 @@
                         <Frame Padding="15" Margin="10,5" CornerRadius="10" BorderColor="#E0E0E0" HasShadow="True">
                             <Grid RowDefinitions="Auto, Auto, Auto, Auto" ColumnDefinitions="*">
 
-                                <Label Grid.Row="0" 
-                                       Text="{Binding WorkerName}" 
-                                       FontAttributes="Bold" FontSize="18"/>
+                                <VerticalStackLayout Grid.Row="0" Spacing="2">
+                                    <VerticalStackLayout.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding BindingContext.ViewWorkerProfileCommand, Source={x:Reference ThisPage}}"
+                                                              CommandParameter="{Binding .}" />
+                                    </VerticalStackLayout.GestureRecognizers>
+
+                                    <Label Text="{Binding WorkerName}" 
+                                           FontAttributes="Bold" FontSize="18" 
+                                           TextDecorations="Underline"
+                                           TextColor="{StaticResource PrimaryColor}"/>
+
+                                    <Label FontSize="12" TextColor="#FFB300" FontAttributes="Bold">
+                                        <Label.FormattedText>
+                                            <FormattedString>
+                                                <Span Text="⭐ " />
+                                                <Span Text="{Binding AverageRating, StringFormat='{0:N1}'}" />
+                                                <Span Text=" (Avg. Rating)" TextColor="Gray" FontAttributes="None"/>
+                                            </FormattedString>
+                                        </Label.FormattedText>
+                                    </Label>
+
+                                    <Label Text="Tap to see reviews >" FontSize="10" TextColor="Gray" FontAttributes="Italic"/>
+                                </VerticalStackLayout>
 
                                 <Label Grid.Row="1"
                                        Text="CLOCK IN"
@@ -46,33 +66,50 @@
                                     <Label.FormattedText>
                                         <FormattedString>
                                             <Span Text="Negotiated Rate: " />
-                                            <Span Text="{Binding NegotiatedRate, StringFormat='{0:C}/hr'}" />
+                                            <Span Text="{Binding NegotiatedRate, StringFormat='Php {0:N2}/hr'}" />
                                         </FormattedString>
                                     </Label.FormattedText>
                                 </Label>
 
-                                <Button Grid.Row="3" 
-                                        Text="Accept Worker"
-                                        Style="{StaticResource TopTabButton}"
-                                        BackgroundColor="{StaticResource SecondaryColor}"
-                                        TextColor="White"
-                                        Margin="0,15,0,0"
-                                        HorizontalOptions="Start"
-                                        Command="{Binding BindingContext.AcceptApplicationCommand, Source={x:Reference ThisPage}}"
-                                        CommandParameter="{Binding .}">
-                                    <Button.Triggers>
-                                        <DataTrigger TargetType="Button" Binding="{Binding Status}" Value="Accepted">
-                                            <Setter Property="Text" Value="Accepted" />
-                                            <Setter Property="IsEnabled" Value="False" />
-                                            <Setter Property="BackgroundColor" Value="Gray" />
-                                        </DataTrigger>
-                                        <DataTrigger TargetType="Button" Binding="{Binding Status}" Value="Rejected">
-                                            <Setter Property="Text" Value="Rejected" />
-                                            <Setter Property="IsEnabled" Value="False" />
-                                            <Setter Property="BackgroundColor" Value="Gray" />
-                                        </DataTrigger>
-                                    </Button.Triggers>
-                                </Button>
+                                <HorizontalStackLayout Grid.Row="3" Spacing="10" Margin="0,15,0,0">
+
+                                    <Button Text="Accept"
+                                            Style="{StaticResource TopTabButton}"
+                                            BackgroundColor="{StaticResource SecondaryColor}"
+                                            TextColor="White"
+                                            Command="{Binding BindingContext.AcceptApplicationCommand, Source={x:Reference ThisPage}}"
+                                            CommandParameter="{Binding .}">
+                                        <Button.Triggers>
+                                            <DataTrigger TargetType="Button" Binding="{Binding Status}" Value="Accepted">
+                                                <Setter Property="Text" Value="Accepted" />
+                                                <Setter Property="IsEnabled" Value="False" />
+                                                <Setter Property="BackgroundColor" Value="Gray" />
+                                            </DataTrigger>
+                                            <DataTrigger TargetType="Button" Binding="{Binding Status}" Value="Rejected">
+                                                <Setter Property="IsVisible" Value="False" />
+                                            </DataTrigger>
+                                        </Button.Triggers>
+                                    </Button>
+
+                                    <Button Text="Reject"
+                                            Style="{StaticResource TopTabButton}"
+                                            BackgroundColor="{StaticResource DangerColor}"
+                                            TextColor="White"
+                                            Command="{Binding BindingContext.RejectApplicationCommand, Source={x:Reference ThisPage}}"
+                                            CommandParameter="{Binding .}">
+                                        <Button.Triggers>
+                                            <DataTrigger TargetType="Button" Binding="{Binding Status}" Value="Accepted">
+                                                <Setter Property="IsVisible" Value="False" />
+                                            </DataTrigger>
+                                            <DataTrigger TargetType="Button" Binding="{Binding Status}" Value="Rejected">
+                                                <Setter Property="Text" Value="Rejected" />
+                                                <Setter Property="IsEnabled" Value="False" />
+                                                <Setter Property="BackgroundColor" Value="Gray" />
+                                            </DataTrigger>
+                                        </Button.Triggers>
+                                    </Button>
+
+                                </HorizontalStackLayout>
                             </Grid>
                         </Frame>
                     </DataTemplate>

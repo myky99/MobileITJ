@@ -8,15 +8,13 @@
              Title="HR Reports &amp; Stats"
              BackgroundColor="{StaticResource BackgroundColor}">
 
-    <RefreshView Command="{Binding LoadReportsCommand}" 
-                 IsRefreshing="{Binding IsBusy}">
+    <RefreshView Command="{Binding LoadReportsCommand}" IsRefreshing="{Binding IsBusy}">
         <ScrollView>
             <VerticalStackLayout Padding="15" Spacing="20">
 
                 <Label Text="System Overview" FontSize="20" FontAttributes="Bold" TextColor="{StaticResource PrimaryColor}"/>
 
                 <Grid ColumnDefinitions="*, *" RowDefinitions="Auto, Auto" ColumnSpacing="10" RowSpacing="10">
-
                     <Frame Grid.Row="0" Grid.Column="0" BackgroundColor="{StaticResource PrimaryColor}" Padding="15" CornerRadius="10" BorderColor="Transparent" HasShadow="True">
                         <VerticalStackLayout>
                             <Label Text="{Binding TotalWorkers}" FontSize="28" FontAttributes="Bold" TextColor="White" HorizontalOptions="Center"/>
@@ -38,20 +36,17 @@
                         </HorizontalStackLayout>
                     </Frame>
                 </Grid>
+
                 <BoxView HeightRequest="1" Color="Gray" Margin="0,10" />
 
                 <Label Text="Worker Reports" FontSize="20" FontAttributes="Bold" />
 
-                <CollectionView ItemsSource="{Binding WorkerReports}"
-                                EmptyView="No workers found.">
+                <CollectionView ItemsSource="{Binding WorkerReports}" EmptyView="No workers found.">
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="models:HrReportDetail">
                             <Frame Padding="15" Margin="0,5" CornerRadius="10" BorderColor="#E0E0E0" HasShadow="True">
-
                                 <Frame.GestureRecognizers>
-                                    <TapGestureRecognizer 
-                                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:ViewJobsReportViewModel}}, Path=ToggleExpandCommand}"
-                                        CommandParameter="{Binding .}" />
+                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:ViewJobsReportViewModel}}, Path=ToggleExpandCommand}" CommandParameter="{Binding .}" />
                                 </Frame.GestureRecognizers>
 
                                 <VerticalStackLayout Spacing="10">
@@ -60,11 +55,8 @@
                                             <Label Text="{Binding Worker.FullName}" FontAttributes="Bold" FontSize="18"/>
                                             <Label Text="{Binding Worker.WorkerId}" FontSize="12" TextColor="Gray"/>
                                         </VerticalStackLayout>
-                                        <Label Grid.Column="1"
-                                               Text="{Binding Worker.RatePerHour, StringFormat='{0:C}/hr'}"
-                                               FontAttributes="Bold"
-                                               TextColor="{StaticResource PrimaryColor}"
-                                               VerticalOptions="Center" />
+
+                                        <Label Grid.Column="1" Text="{Binding Worker.RatePerHour, StringFormat='Php {0:N2}/hr'}" FontAttributes="Bold" TextColor="{StaticResource PrimaryColor}" VerticalOptions="Center" />
                                     </Grid>
 
                                     <Label FontSize="14">
@@ -81,19 +73,11 @@
                                         </Label.Triggers>
                                     </Label>
 
-                                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding Reports}"
-                                                         IsVisible="{Binding IsExpanded}"
-                                                         Spacing="8" Margin="0,10,0,0">
-
-                                        <Label Text="--- Report Details ---" 
-                                               FontSize="10" TextColor="Gray" HorizontalOptions="Center" 
-                                               IsVisible="{Binding HasReports}"/>
-
+                                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding Reports}" IsVisible="{Binding IsExpanded}" Spacing="8" Margin="0,10,0,0">
+                                        <Label Text="--- Report Details ---" FontSize="10" TextColor="Gray" HorizontalOptions="Center" IsVisible="{Binding HasReports}"/>
                                         <BindableLayout.ItemTemplate>
                                             <DataTemplate x:DataType="models:WorkerReport">
-                                                <Border Stroke="LightGray" StrokeThickness="1" 
-                                                        Padding="10" BackgroundColor="#FAFAFA" 
-                                                        StrokeShape="RoundRectangle 5">
+                                                <Border Stroke="LightGray" StrokeThickness="1" Padding="10" BackgroundColor="#FAFAFA" StrokeShape="RoundRectangle 5">
                                                     <VerticalStackLayout Spacing="3">
                                                         <Label Text="{Binding ReportMessage}" FontAttributes="Italic" TextColor="#333"/>
                                                         <BoxView Color="LightGray" HeightRequest="1" Margin="0,5"/>

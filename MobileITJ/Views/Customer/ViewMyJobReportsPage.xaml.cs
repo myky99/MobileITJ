@@ -5,20 +5,18 @@ namespace MobileITJ.Views.Customer
 {
     public partial class ViewMyJobReportsPage : ContentPage
     {
-        private readonly ViewMyJobReportsViewModel _viewModel; // 👈 Add
+        private readonly ViewMyJobReportsViewModel _viewModel;
 
         public ViewMyJobReportsPage(ViewMyJobReportsViewModel vm)
         {
             InitializeComponent();
             BindingContext = vm;
-            _viewModel = vm; // 👈 Add
+            _viewModel = vm;
         }
 
-        // --- 👇 ADD THIS METHOD 👇 ---
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-            // Tell the ViewModel to load the data
             await _viewModel.OnAppearing();
         }
     }

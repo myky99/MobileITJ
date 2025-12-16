@@ -337,10 +337,40 @@ namespace MobileITJ.Services
         {
             var job = _jobs.FirstOrDefault(j => j.Id == jobId);
             var details = new List<JobApplicationDetail>();
-            foreach (var app in _jobApplications.Where(a => a.JobId == jobId))
+
+            // Get all applications for this job
+            var currentJobApps = _jobApplications.Where(a => a.JobId == jobId);
+
+            foreach (var app in currentJobApps)
             {
                 var w = _users.Values.FirstOrDefault(u => u.Id == app.WorkerUserId);
-                details.Add(new JobApplicationDetail { ApplicationId = app.Id, JobId = app.JobId, WorkerUserId = app.WorkerUserId, WorkerName = w != null ? $"{w.FirstName} {w.LastName}" : "Unknown", NegotiatedRate = app.NegotiatedRate, Status = app.Status, IsRated = app.IsRated, Rating = app.Rating, Review = app.Review, TotalTimeSpent = app.TotalTimeSpent, IsPaid = app.IsPaid, IsClockedIn = app.ClockInTime != null, JobStatus = job?.Status ?? JobStatus.Open });
+
+                // 👇 NEW: Calculate Average Rating for this Worker
+                // Find all *rated* applications for this specific worker across ALL jobs
+                var workerRatings = _jobApplications
+                    .Where(a => a.WorkerUserId == app.WorkerUserId && a.IsRated)
+                    .Select(a => (double)a.Rating)
+                    .ToList();
+
+                double avgRating = workerRatings.Any() ? workerRatings.Average() : 0.0;
+
+                details.Add(new JobApplicationDetail
+                {
+                    ApplicationId = app.Id,
+                    JobId = app.JobId,
+                    WorkerUserId = app.WorkerUserId,
+                    WorkerName = w != null ? $"{w.FirstName} {w.LastName}" : "Unknown",
+                    NegotiatedRate = app.NegotiatedRate,
+                    Status = app.Status,
+                    IsRated = app.IsRated,
+                    Rating = app.Rating,
+                    Review = app.Review,
+                    TotalTimeSpent = app.TotalTimeSpent,
+                    IsPaid = app.IsPaid,
+                    IsClockedIn = app.ClockInTime != null,
+                    JobStatus = job?.Status ?? JobStatus.Open,
+                    AverageRating = avgRating
+                });
             }
             return await Task.FromResult(details);
         }
@@ -358,13 +388,24 @@ namespace MobileITJ.Services
             return (true, "Accepted.");
         }
 
+        // 👇 THIS IS THE MISSING METHOD YOU NEED
+        public async Task<(bool Success, string Message)> RejectApplicationAsync(int applicationId)
+        {
+            var app = _jobApplications.FirstOrDefault(a => a.Id == applicationId);
+            if (app == null) return (false, "Application not found.");
+
+            app.Status = ApplicationStatus.Rejected;
+            await SaveJobApplicationsAsync();
+            return (true, "Application rejected.");
+        }
+        // 👆 END MISSING METHOD
+
         public async Task<List<MyJobDetail>> GetMyWorkerJobsAsync()
         {
             var user = await GetCurrentUserAsync();
             if (user == null) return new List<MyJobDetail>();
             var jobs = _jobs.ToDictionary(j => j.Id);
 
-            // 👇 UPDATED: Get 'Pending' AND 'Accepted' jobs
             return await Task.FromResult(_jobApplications
                 .Where(a => a.WorkerUserId == user.Id &&
                            (a.Status == ApplicationStatus.Accepted || a.Status == ApplicationStatus.Pending))
@@ -374,7 +415,7 @@ namespace MobileITJ.Services
                     Job = jobs.ContainsKey(a.JobId) ? jobs[a.JobId] : null,
                     TotalTimeSpent = a.TotalTimeSpent,
                     IsClockedIn = a.ClockInTime != null,
-                    Status = a.Status // 👈 Map status here
+                    Status = a.Status
                 })
                 .Where(j => j.Job != null)
                 .OrderByDescending(j => j.Job.DatePosted)
@@ -405,7 +446,10 @@ namespace MobileITJ.Services
         {
             var job = _jobs.FirstOrDefault(j => j.Id == jobId);
             if (_jobApplications.Any(a => a.JobId == jobId && a.ClockInTime != null)) return (false, "Workers still clocked in.");
+
             job.Status = JobStatus.Completed;
+            job.DateCompleted = DateTime.UtcNow;
+
             await SaveJobsAsync();
             return (true, "Completed!");
         }
@@ -416,9 +460,6 @@ namespace MobileITJ.Services
             if (app != null) { app.IsRated = true; app.Rating = rating; app.Review = review; await SaveJobApplicationsAsync(); }
         }
 
-        // -----------------------------------------------------------------------------
-        // 👇 UPDATED: Get Ratings (Includes Title & Customer Name) 👇
-        // -----------------------------------------------------------------------------
         public async Task<List<RatingDetail>> GetMyRatingsAsync()
         {
             var user = await GetCurrentUserAsync();
@@ -426,7 +467,6 @@ namespace MobileITJ.Services
 
             var details = new List<RatingDetail>();
             var jobsDict = _jobs.ToDictionary(j => j.Id);
-            // Create a lookup for customers so we can find their names quickly
             var customersDict = _users.Values.ToDictionary(u => u.Id);
 
             var myRatedApps = _jobApplications
@@ -440,10 +480,7 @@ namespace MobileITJ.Services
 
                 if (jobsDict.TryGetValue(app.JobId, out var job))
                 {
-                    // Prefer Title, fall back to Description
                     jobDesc = !string.IsNullOrEmpty(job.Title) ? job.Title : job.JobDescription;
-
-                    // Lookup Customer Name using the CustomerId from the Job
                     if (customersDict.TryGetValue(job.CustomerId, out var customer))
                     {
                         custName = $"{customer.FirstName} {customer.LastName}";
@@ -461,7 +498,6 @@ namespace MobileITJ.Services
 
             return await Task.FromResult(details);
         }
-        // -----------------------------------------------------------------------------
 
         public async Task<(bool Success, string Message)> PayWorkerAsync(int applicationId)
         {
@@ -480,14 +516,11 @@ namespace MobileITJ.Services
             return await Task.FromResult(_transactions.Where(t => t.WorkerUserId == user.Id).OrderByDescending(t => t.DatePaid).ToList());
         }
 
-        // 👇 NEW: For HR Stats
         public async Task<List<Transaction>> GetAllTransactionsAsync()
         {
             if (!_isInitialized) await InitializeAsync();
-            // Return all transactions (payouts) sorted by date
             return await Task.FromResult(_transactions.OrderByDescending(t => t.DatePaid).ToList());
         }
-        // 👆 END NEW
 
         public async Task<(bool Success, string Message)> FileWorkerReportAsync(WorkerDetail worker, Job job, string message)
         {

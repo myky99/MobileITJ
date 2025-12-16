@@ -37,11 +37,44 @@
                     </VerticalStackLayout>
                 </Frame>
 
-                <Label Text="My Skills" FontSize="20" FontAttributes="Bold" />
+                <Grid ColumnDefinitions="*, Auto" Margin="0,5">
+                    <Label Grid.Column="0" Text="My Skills" FontSize="20" FontAttributes="Bold" VerticalOptions="Center"/>
+                    <Button Grid.Column="1" Text="+ Add Skill" 
+                            Command="{Binding ToggleAddSkillCommand}"
+                            FontSize="12" HeightRequest="30" Padding="10,0"
+                            BackgroundColor="Transparent" TextColor="{StaticResource PrimaryColor}"/>
+                </Grid>
+
+                <Frame IsVisible="{Binding IsAddingSkill}" Padding="10" BackgroundColor="#F5F5F5" BorderColor="LightGray" CornerRadius="8">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="Select New Skill:" FontSize="12" FontAttributes="Bold" TextColor="Gray"/>
+
+                        <Frame Padding="0" BorderColor="LightGray" CornerRadius="5" HasShadow="False">
+                            <Picker Title="Select Skill Category"
+                                    ItemsSource="{Binding AvailableSkills}"
+                                    SelectedItem="{Binding SelectedSkill}"
+                                    TextColor="Black" TitleColor="Gray"/>
+                        </Frame>
+
+                        <Entry Placeholder="Type custom skill..." 
+                               Text="{Binding CustomSkillEntry}"
+                               IsVisible="{Binding IsCustomSkillVisible}"
+                               BackgroundColor="White"/>
+
+                        <Button Text="Save Skill" 
+                                Command="{Binding SaveSkillCommand}"
+                                BackgroundColor="{StaticResource PrimaryColor}" 
+                                TextColor="White"
+                                HeightRequest="40"
+                                CornerRadius="5"/>
+                    </VerticalStackLayout>
+                </Frame>
                 <CollectionView ItemsSource="{Binding Profile.Skills}">
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="x:String">
-                            <Label Text="{Binding .}" Margin="10,0" FontSize="16"/>
+                            <Frame Padding="10" Margin="0,2" BorderColor="LightGray" HasShadow="False">
+                                <Label Text="{Binding .}" FontSize="16"/>
+                            </Frame>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
