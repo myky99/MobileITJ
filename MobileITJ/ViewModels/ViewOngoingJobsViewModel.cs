@@ -13,8 +13,7 @@ namespace MobileITJ.ViewModels
         private readonly IAuthenticationService _auth;
         private readonly IPopupService _popupService;
 
-        // 👇 3 SEPARATE LISTS
-        public ObservableCollection<MyJobDetail> PendingApplications { get; } = new ObservableCollection<MyJobDetail>();
+        // 👇 Split into two collections
         public ObservableCollection<MyJobDetail> ActiveJobs { get; } = new ObservableCollection<MyJobDetail>();
         public ObservableCollection<MyJobDetail> JobHistory { get; } = new ObservableCollection<MyJobDetail>();
 
@@ -51,7 +50,6 @@ namespace MobileITJ.ViewModels
 
             try
             {
-                PendingApplications.Clear();
                 ActiveJobs.Clear();
                 JobHistory.Clear();
 
@@ -59,17 +57,12 @@ namespace MobileITJ.ViewModels
 
                 foreach (var job in allMyJobs)
                 {
-                    // 1. If Job itself is closed (Completed/Incomplete), it goes to History
+                    // Sort based on status
                     if (job.Job.Status == JobStatus.Completed || job.Job.Status == JobStatus.Incomplete)
                     {
                         JobHistory.Add(job);
                     }
-                    // 2. If Job is open, check Application Status
-                    else if (job.Status == ApplicationStatus.Pending)
-                    {
-                        PendingApplications.Add(job); // 👈 New Pending Logic
-                    }
-                    else if (job.Status == ApplicationStatus.Accepted)
+                    else
                     {
                         ActiveJobs.Add(job);
                     }
@@ -87,6 +80,7 @@ namespace MobileITJ.ViewModels
 
             if (jobDetail.IsClockedIn)
             {
+                // Clock Out
                 var (success, message, totalTime) = await _auth.ClockOutAsync(jobDetail.ApplicationId);
                 if (success)
                 {
@@ -94,13 +88,23 @@ namespace MobileITJ.ViewModels
                     if (totalTime.HasValue)
                         jobDetail.TotalTimeSpent = totalTime.Value;
                 }
-                else await _popupService.DisplayAlert("Error", message, "OK");
+                else
+                {
+                    await _popupService.DisplayAlert("Error", message, "OK");
+                }
             }
             else
             {
+                // Clock In
                 var (success, message) = await _auth.ClockInAsync(jobDetail.ApplicationId);
-                if (success) jobDetail.IsClockedIn = true;
-                else await _popupService.DisplayAlert("Error", message, "OK");
+                if (success)
+                {
+                    jobDetail.IsClockedIn = true;
+                }
+                else
+                {
+                    await _popupService.DisplayAlert("Error", message, "OK");
+                }
             }
         }
     }

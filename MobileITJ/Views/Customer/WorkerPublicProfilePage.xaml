@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:MobileITJ.Models"
+             xmlns:viewmodel="clr-namespace:MobileITJ.ViewModels"
+             x:DataType="viewmodel:WorkerPublicProfileViewModel"
+             x:Class="MobileITJ.Views.Customer.WorkerPublicProfilePage"
+             Title="Worker Profile"
+             BackgroundColor="{StaticResource BackgroundColor}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="20">
+
+            <Frame Padding="20" CornerRadius="15" BackgroundColor="White" BorderColor="#E0E0E0" HasShadow="True">
+                <VerticalStackLayout Spacing="10" HorizontalOptions="Center">
+                    <Image Source="user_placeholder.png" HeightRequest="80" WidthRequest="80" Aspect="AspectFit"/>
+
+                    <Label Text="{Binding WorkerName}" 
+                           FontSize="24" 
+                           FontAttributes="Bold" 
+                           HorizontalOptions="Center" 
+                           TextColor="{StaticResource TextDark}"/>
+
+                    <Label HorizontalOptions="Center">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="{Binding AverageRating, StringFormat='{0:N1}'}" FontSize="32" FontAttributes="Bold" TextColor="#FFB300"/>
+                                <Span Text=" / 5.0" FontSize="18" TextColor="Gray"/>
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+
+                    <Label Text="Based on past client reviews" FontSize="12" TextColor="Gray" HorizontalOptions="Center"/>
+                </VerticalStackLayout>
+            </Frame>
+
+            <Label Text="Work History &amp; Reviews" FontSize="18" FontAttributes="Bold" Margin="0,10,0,0"/>
+
+            <CollectionView ItemsSource="{Binding Reviews}"
+                            EmptyView="No reviews yet.">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:JobApplicationDetail">
+                        <Frame Padding="15" Margin="0,5" CornerRadius="10" BorderColor="#E0E0E0" BackgroundColor="White">
+                            <VerticalStackLayout Spacing="5">
+                                <Grid ColumnDefinitions="*, Auto">
+                                    <Label Grid.Column="0" Text="{Binding WorkerName}" FontAttributes="Bold" FontSize="16" TextColor="{StaticResource PrimaryColor}"/>
+                                    <Label Grid.Column="1" Text="{Binding Rating, StringFormat='⭐ {0}'}" TextColor="#FFB300" FontAttributes="Bold"/>
+                                </Grid>
+
+                                <Label Text="{Binding Review}" FontSize="14" TextColor="#333" FontAttributes="Italic"/>
+
+                                <Label Text="Verified Job" FontSize="10" TextColor="Green" HorizontalOptions="End"/>
+                            </VerticalStackLayout>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <Button Text="Back" Command="{Binding BackCommand}" BackgroundColor="Gray" Margin="0,20,0,0"/>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

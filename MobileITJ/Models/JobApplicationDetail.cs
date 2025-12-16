@@ -1,5 +1,7 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Collections.Generic;
 
 namespace MobileITJ.Models
 {
@@ -11,11 +13,11 @@ namespace MobileITJ.Models
         private string _review = "";
         private TimeSpan _totalTimeSpent;
         private bool _isPaid;
-
-        // --- 👇 ADD THESE TWO NEW PROPERTIES 👇 ---
         private bool _isClockedIn;
         private JobStatus _jobStatus;
-        // --- END OF NEW ---
+
+        // 👇 NEW: Average Rating
+        private double _averageRating;
 
         public int ApplicationId { get; set; }
         public int JobId { get; set; }
@@ -23,6 +25,12 @@ namespace MobileITJ.Models
 
         public string WorkerName { get; set; } = "";
         public decimal NegotiatedRate { get; set; }
+
+        public double AverageRating
+        {
+            get => _averageRating;
+            set => SetProperty(ref _averageRating, value);
+        }
 
         public ApplicationStatus Status
         {
@@ -60,7 +68,6 @@ namespace MobileITJ.Models
             set => SetProperty(ref _isPaid, value);
         }
 
-        // --- 👇 ADD THESE NEW GETTERS/SETTERS 👇 ---
         public bool IsClockedIn
         {
             get => _isClockedIn;
@@ -72,7 +79,6 @@ namespace MobileITJ.Models
             get => _jobStatus;
             set => SetProperty(ref _jobStatus, value);
         }
-        // --- END OF NEW ---
 
         public double TotalPay => TotalTimeSpent.TotalHours * (double)NegotiatedRate;
 

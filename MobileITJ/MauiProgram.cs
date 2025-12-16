@@ -80,6 +80,8 @@ namespace MobileITJ
             builder.Services.AddTransient<UpdateProfileViewModel>();
             builder.Services.AddTransient<ViewRatingsViewModel>();
             builder.Services.AddTransient<WalletViewModel>();
+            builder.Services.AddTransient<Views.Customer.WorkerPublicProfilePage>();
+            builder.Services.AddTransient<ViewModels.WorkerPublicProfileViewModel>();
 
             // ---------------------------------------------------------
             // 3. Pages

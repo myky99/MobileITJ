@@ -17,6 +17,10 @@ namespace MobileITJ.ViewModels
         public ObservableCollection<JobApplicationDetail> Applications { get; } = new ObservableCollection<JobApplicationDetail>();
         public Command LoadApplicationsCommand { get; }
         public Command<JobApplicationDetail> AcceptApplicationCommand { get; }
+        public Command<JobApplicationDetail> RejectApplicationCommand { get; }
+
+        // 👇 NEW: Command to view worker profile
+        public Command<JobApplicationDetail> ViewWorkerProfileCommand { get; }
 
         public Command CompleteJobCommand { get; }
         private bool _canCompleteJob;
@@ -41,6 +45,13 @@ namespace MobileITJ.ViewModels
             _popupService = popupService;
             LoadApplicationsCommand = new Command(async () => await OnLoadApplicationsAsync());
             AcceptApplicationCommand = new Command<JobApplicationDetail>(async (app) => await OnAcceptApplicationAsync(app));
+            RejectApplicationCommand = new Command<JobApplicationDetail>(async (app) => await OnRejectApplicationAsync(app));
+
+            // 👇 NEW: Initialize Profile Command
+            // We will navigate to 'WorkerPublicProfilePage' and pass the WorkerUserId
+            ViewWorkerProfileCommand = new Command<JobApplicationDetail>(async (app) =>
+                await Shell.Current.GoToAsync($"WorkerPublicProfilePage?workerId={app.WorkerUserId}&workerName={app.WorkerName}"));
+
             CompleteJobCommand = new Command(async () => await OnCompleteJobAsync(), () => CanCompleteJob);
         }
 
@@ -82,7 +93,6 @@ namespace MobileITJ.ViewModels
 
         private async Task OnCompleteJobAsync()
         {
-            // This call will now work correctly
             var (success, message) = await _auth.CustomerCompleteJobAsync(JobId);
 
             if (success)
@@ -102,7 +112,7 @@ namespace MobileITJ.ViewModels
 
             bool confirm = await _popupService.DisplayAlert(
                 "Accept Worker?",
-                $"Do you want to accept {application.WorkerName} for this job at {application.NegotiatedRate:C}/hr?",
+                $"Do you want to accept {application.WorkerName} for this job at Php {application.NegotiatedRate:N2}/hr?",
                 "Accept", "Cancel");
 
             if (!confirm) return;
@@ -112,6 +122,29 @@ namespace MobileITJ.ViewModels
             if (success)
             {
                 await _popupService.DisplayAlert("Worker Accepted!", message, "OK");
+                await OnLoadApplicationsAsync();
+            }
+            else
+            {
+                await _popupService.DisplayAlert("Error", message, "OK");
+            }
+        }
+
+        private async Task OnRejectApplicationAsync(JobApplicationDetail application)
+        {
+            if (application == null) return;
+
+            bool confirm = await _popupService.DisplayAlert(
+                "Reject Application",
+                $"Are you sure you want to reject {application.WorkerName}?",
+                "Yes, Reject", "Cancel");
+
+            if (!confirm) return;
+
+            var (success, message) = await _auth.RejectApplicationAsync(application.ApplicationId);
+
+            if (success)
+            {
                 await OnLoadApplicationsAsync();
             }
             else

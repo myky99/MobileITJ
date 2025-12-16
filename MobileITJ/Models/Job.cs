@@ -9,7 +9,7 @@ namespace MobileITJ.Models
     {
         private int _id;
         private int _customerId;
-        private string _title = ""; // Ensure this exists from previous steps
+        private string _title = "";
         private string _jobDescription = "";
         private string _location = "";
         private decimal _ratePerHour;
@@ -17,9 +17,10 @@ namespace MobileITJ.Models
         private int _workersNeeded;
         private DateTime _datePosted;
         private JobStatus _status = JobStatus.Open;
-
-        // 👇 NEW: Reason for failure (optional)
         private string _incompleteReason = "";
+
+        // 👇 NEW: Date Completed
+        private DateTime? _dateCompleted;
 
         public int Id { get => _id; set => SetProperty(ref _id, value); }
         public int CustomerId { get => _customerId; set => SetProperty(ref _customerId, value); }
@@ -31,9 +32,10 @@ namespace MobileITJ.Models
         public int WorkersNeeded { get => _workersNeeded; set => SetProperty(ref _workersNeeded, value); }
         public DateTime DatePosted { get => _datePosted; set => SetProperty(ref _datePosted, value); }
         public JobStatus Status { get => _status; set => SetProperty(ref _status, value); }
+        public string IncompleteReason { get => _incompleteReason; set => SetProperty(ref _incompleteReason, value); }
 
         // 👇 NEW PROPERTY
-        public string IncompleteReason { get => _incompleteReason; set => SetProperty(ref _incompleteReason, value); }
+        public DateTime? DateCompleted { get => _dateCompleted; set => SetProperty(ref _dateCompleted, value); }
 
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string name = "") =>
